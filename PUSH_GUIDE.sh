@@ -1,0 +1,40 @@
+#!/bin/bash
+
+echo "🎉 倉庫已建立！現在推送代碼"
+echo "=========================="
+echo ""
+
+echo "📋 方法 1: 使用 GitHub Desktop (推薦)"
+echo "1. 下載並安裝 GitHub Desktop"
+echo "2. 打開 GitHub Desktop"
+echo "3. File → Add Local Repository"
+echo "4. 選擇: $(pwd)"
+echo "5. 點擊 'Publish Repository'"
+echo "6. 選擇 'Alvinhung/perpdex-dashboard'"
+echo "7. 點擊 'Publish'"
+echo ""
+
+echo "📋 方法 2: 使用 Personal Access Token"
+echo "1. 前往: https://github.com/settings/tokens"
+echo "2. 點擊 'Generate new token (classic)'"
+echo "3. 勾選: repo, workflow"
+echo "4. 複製生成的 token"
+echo "5. 執行: git push https://Alvinhung:YOUR_TOKEN@github.com/Alvinhung/perpdex-dashboard.git main"
+echo ""
+
+echo "📋 方法 3: 使用 GitHub CLI"
+echo "1. 安裝: brew install gh"
+echo "2. 登入: gh auth login"
+echo "3. 推送: git push --set-upstream origin main"
+echo ""
+
+echo "🚀 推送完成後:"
+echo "1. 前往: https://github.com/Alvinhung/perpdex-dashboard/settings/pages"
+echo "2. Source: 選擇 'GitHub Actions'"
+echo "3. 點擊 'Save'"
+echo "4. 等待 2-3 分鐘"
+echo "5. 訪問: https://Alvinhung.github.io/perpdex-dashboard"
+echo ""
+
+echo "🔗 當前可用 (同網絡):"
+echo "http://192.168.68.53:3000/"
