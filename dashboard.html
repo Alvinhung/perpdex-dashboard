@@ -1,0 +1,1266 @@
+<!DOCTYPE html>
+<html lang="zh-TW">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>PerpMarket Alpha - 市場估值與發幣預期</title>
+    <script src="https://unpkg.com/react@18/umd/react.production.min.js"></script>
+    <script src="https://unpkg.com/react-dom@18/umd/react-dom.production.min.js"></script>
+    <script src="https://unpkg.com/@babel/standalone/babel.min.js"></script>
+    <script src="https://unpkg.com/recharts@2.8.0/umd/Recharts.js"></script>
+    <script src="https://unpkg.com/lucide@latest/dist/umd/lucide.js"></script>
+    <style>
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+        }
+        
+        body {
+            font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, sans-serif;
+            background-color: #F5F2EB;
+            color: #1A2E3B;
+            line-height: 1.6;
+        }
+
+        .container {
+            max-width: 1280px;
+            margin: 0 auto;
+            padding: 0 1rem;
+        }
+
+        /* 顏色配置 */
+        :root {
+            --primary: #2D5975;
+            --secondary: #708238;
+            --accent: #C3B091;
+            --background: #F5F2EB;
+            --card-bg: #D9C8B4;
+            --text: #1A2E3B;
+            --white: #FFFFFF;
+            --warning: #E6A23C;
+            --danger: #D9534F;
+            --footer-text: #7F867B;
+        }
+
+        /* 導航列 */
+        nav {
+            background-color: var(--primary);
+            box-shadow: 0 2px 4px rgba(0,0,0,0.1);
+        }
+
+        .nav-content {
+            display: flex;
+            align-items: center;
+            justify-content: space-between;
+            height: 64px;
+        }
+
+        .nav-brand {
+            display: flex;
+            align-items: center;
+            gap: 0.75rem;
+        }
+
+        .nav-brand h1 {
+            color: white;
+            font-size: 1.25rem;
+            font-weight: bold;
+        }
+
+        .nav-brand .accent {
+            color: var(--accent);
+        }
+
+        .nav-info {
+            display: flex;
+            align-items: center;
+            gap: 1rem;
+            color: white;
+            font-size: 0.875rem;
+            opacity: 0.9;
+        }
+
+        .live-indicator {
+            display: flex;
+            align-items: center;
+            gap: 0.5rem;
+            background: rgba(0,0,0,0.2);
+            padding: 0.25rem 0.75rem;
+            border-radius: 9999px;
+        }
+
+        .live-dot {
+            width: 8px;
+            height: 8px;
+            background: #4ade80;
+            border-radius: 50%;
+            animation: pulse 2s infinite;
+        }
+
+        @keyframes pulse {
+            0%, 100% { opacity: 1; }
+            50% { opacity: 0.5; }
+        }
+
+        /* 主要內容 */
+        main {
+            padding: 2rem 0;
+        }
+
+        .header-section {
+            display: flex;
+            justify-content: space-between;
+            align-items: flex-start;
+            margin-bottom: 2rem;
+            gap: 1rem;
+        }
+
+        @media (max-width: 768px) {
+            .header-section {
+                flex-direction: column;
+            }
+        }
+
+        .header-title h1 {
+            color: var(--primary);
+            font-size: 1.875rem;
+            font-weight: bold;
+            margin-bottom: 0.25rem;
+        }
+
+        .header-title p {
+            color: var(--secondary);
+            font-size: 0.875rem;
+        }
+
+        .controls {
+            display: flex;
+            align-items: center;
+            gap: 0.75rem;
+        }
+
+        .search-box {
+            position: relative;
+        }
+
+        .search-box input {
+            padding: 0.5rem 1rem 0.5rem 2.5rem;
+            border: 1px solid var(--accent);
+            border-radius: 0.5rem;
+            font-size: 0.875rem;
+            outline: none;
+            transition: all 0.2s;
+        }
+
+        .search-box input:focus {
+            ring: 2px var(--primary);
+        }
+
+        .search-icon {
+            position: absolute;
+            left: 0.75rem;
+            top: 50%;
+            transform: translateY(-50%);
+            opacity: 0.4;
+        }
+
+        .btn {
+            display: flex;
+            align-items: center;
+            gap: 0.5rem;
+            padding: 0.5rem 1rem;
+            background-color: var(--secondary);
+            color: white;
+            border: none;
+            border-radius: 0.5rem;
+            font-size: 0.875rem;
+            cursor: pointer;
+            transition: all 0.2s;
+        }
+
+        .btn:hover {
+            opacity: 0.9;
+        }
+
+        .btn:active {
+            transform: scale(0.95);
+        }
+
+        /* 卡片網格 */
+        .card-grid {
+            display: grid;
+            grid-template-columns: repeat(auto-fit, minmax(240px, 1fr));
+            gap: 1.5rem;
+            margin-bottom: 2rem;
+        }
+
+        .card {
+            background: white;
+            border-radius: 0.75rem;
+            padding: 1.5rem;
+            box-shadow: 0 4px 6px rgba(0,0,0,0.1);
+            border-left: 4px solid var(--secondary);
+        }
+
+        .card-header {
+            display: flex;
+            justify-content: space-between;
+            align-items: flex-start;
+        }
+
+        .card-title {
+            color: var(--secondary);
+            font-size: 0.875rem;
+            font-weight: bold;
+            letter-spacing: 0.05em;
+            margin-bottom: 0.25rem;
+        }
+
+        .card-value {
+            color: var(--primary);
+            font-size: 1.5rem;
+            font-weight: bold;
+        }
+
+        .card-subvalue {
+            color: var(--text);
+            font-size: 0.75rem;
+            opacity: 0.7;
+            margin-top: 0.25rem;
+        }
+
+        .card-icon {
+            padding: 0.75rem;
+            background: rgba(195, 176, 145, 0.3);
+            border-radius: 50%;
+        }
+
+        .card-icon svg {
+            color: var(--primary);
+        }
+
+        /* 圖表區域 */
+        .charts-grid {
+            display: grid;
+            grid-template-columns: 2fr 1fr;
+            gap: 2rem;
+            margin-bottom: 2rem;
+        }
+
+        @media (max-width: 1024px) {
+            .charts-grid {
+                grid-template-columns: 1fr;
+            }
+        }
+
+        .chart-card {
+            background: white;
+            border-radius: 0.75rem;
+            padding: 1.5rem;
+            box-shadow: 0 4px 6px rgba(0,0,0,0.1);
+            border-top: 4px solid var(--primary);
+        }
+
+        .chart-title {
+            color: var(--primary);
+            font-size: 1.125rem;
+            font-weight: bold;
+            margin-bottom: 1.5rem;
+            display: flex;
+            align-items: center;
+            gap: 0.5rem;
+        }
+
+        .chart-container {
+            height: 350px;
+        }
+
+        /* 熱度列表 */
+        .hotness-list {
+            max-height: 350px;
+            overflow-y: auto;
+            padding-right: 0.5rem;
+        }
+
+        .hotness-item {
+            display: flex;
+            align-items: center;
+            justify-content: space-between;
+            padding: 0.75rem;
+            border-bottom: 1px solid #f3f4f6;
+            transition: background 0.2s;
+        }
+
+        .hotness-item:hover {
+            background: #f9fafb;
+        }
+
+        .hotness-item:last-child {
+            border-bottom: none;
+        }
+
+        .hotness-rank {
+            font-family: monospace;
+            font-size: 0.75rem;
+            font-weight: bold;
+            color: #9ca3af;
+            width: 1rem;
+        }
+
+        .hotness-info {
+            flex: 1;
+            margin-left: 0.75rem;
+        }
+
+        .hotness-name {
+            color: var(--primary);
+            font-weight: bold;
+            font-size: 0.875rem;
+        }
+
+        .hotness-fdv {
+            color: #6b7280;
+            font-size: 0.75rem;
+        }
+
+        .hotness-volume {
+            text-align: right;
+        }
+
+        .hotness-volume-value {
+            color: var(--secondary);
+            font-weight: bold;
+            font-size: 0.875rem;
+        }
+
+        .hotness-volume-label {
+            color: #9ca3af;
+            font-size: 0.75rem;
+        }
+
+        /* 表格 */
+        .table-card {
+            background: white;
+            border-radius: 0.75rem;
+            box-shadow: 0 4px 6px rgba(0,0,0,0.1);
+            overflow: hidden;
+            border: 1px solid #e5e7eb;
+        }
+
+        .table-header {
+            padding: 1rem;
+            border-bottom: 1px solid #e5e7eb;
+            background: #f9fafb;
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            gap: 1rem;
+        }
+
+        .table-title {
+            color: var(--primary);
+            font-weight: bold;
+        }
+
+        .table-legend {
+            display: flex;
+            align-items: center;
+            gap: 0.75rem;
+            font-size: 0.75rem;
+            background: #f3f4f6;
+            padding: 0.5rem 0.75rem;
+            border-radius: 0.5rem;
+        }
+
+        .legend-item {
+            display: flex;
+            align-items: center;
+            gap: 0.25rem;
+        }
+
+        .legend-dot {
+            width: 8px;
+            height: 8px;
+            border-radius: 50%;
+        }
+
+        .table-wrapper {
+            overflow-x: auto;
+        }
+
+        table {
+            width: 100%;
+            border-collapse: collapse;
+        }
+
+        th {
+            background: var(--primary);
+            color: white;
+            padding: 1rem;
+            text-align: left;
+            font-size: 0.75rem;
+            font-weight: bold;
+            text-transform: uppercase;
+            letter-spacing: 0.05em;
+            cursor: pointer;
+            user-select: none;
+            transition: background 0.2s;
+        }
+
+        th:hover {
+            opacity: 0.8;
+        }
+
+        th.right {
+            text-align: right;
+        }
+
+        th.center {
+            text-align: center;
+        }
+
+        td {
+            padding: 1rem;
+            border-bottom: 1px solid #f3f4f6;
+            font-size: 0.875rem;
+        }
+
+        tr:hover {
+            background: #f9fafb;
+        }
+
+        .protocol-cell {
+            display: flex;
+            align-items: center;
+            gap: 0.75rem;
+        }
+
+        .protocol-indicator {
+            width: 8px;
+            height: 32px;
+            border-radius: 4px;
+        }
+
+        .protocol-indicator.top {
+            background: var(--secondary);
+        }
+
+        .protocol-indicator.normal {
+            background: #d1d5db;
+        }
+
+        .protocol-info .name {
+            color: var(--primary);
+            font-weight: bold;
+            font-size: 1rem;
+        }
+
+        .protocol-info .chain {
+            color: #9ca3af;
+            font-size: 0.75rem;
+        }
+
+        .number-cell {
+            font-family: monospace;
+            font-weight: 500;
+        }
+
+        .volume-cell {
+            color: #374151;
+        }
+
+        .oi-cell {
+            color: #6b7280;
+        }
+
+        .ratio-badge {
+            display: inline-flex;
+            align-items: center;
+            padding: 0.25rem 0.625rem;
+            border-radius: 9999px;
+            font-size: 0.75rem;
+            font-weight: bold;
+        }
+
+        .ratio-healthy {
+            color: #15803d;
+            background: #dcfce7;
+        }
+
+        .ratio-elevated {
+            color: #b45309;
+            background: #fef3c7;
+        }
+
+        .ratio-overheated {
+            color: #b91c1c;
+            background: #fee2e2;
+        }
+
+        .poly-volume {
+            font-weight: bold;
+            padding: 0.25rem 0.5rem;
+            background: #f3f4f6;
+            border-radius: 0.25rem;
+            color: #374151;
+            font-size: 0.75rem;
+        }
+
+        .fdv-cell {
+            color: var(--secondary);
+            font-weight: bold;
+            font-family: monospace;
+        }
+
+        .note-cell {
+            max-width: 150px;
+        }
+
+        .note-badge {
+            display: flex;
+            align-items: center;
+            gap: 0.5rem;
+            padding: 0.25rem 0.5rem;
+            background: #fef3c7;
+            border: 1px solid #fcd34d;
+            border-radius: 0.25rem;
+            color: #b45309;
+            font-size: 0.75rem;
+            overflow: hidden;
+            text-overflow: ellipsis;
+            white-space: nowrap;
+        }
+
+        .table-footer {
+            padding: 1rem;
+            border-top: 1px solid #e5e7eb;
+            background: #f9fafb;
+            text-align: center;
+            font-size: 0.75rem;
+            color: #9ca3af;
+        }
+
+        /* 頁尾 */
+        footer {
+            background: var(--background);
+            border-top: 1px solid #e5e7eb;
+            padding: 3rem 0;
+            margin-top: 2rem;
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+            justify-content: center;
+            gap: 1.5rem;
+            color: var(--footer-text);
+            font-size: 0.875rem;
+            font-weight: 500;
+        }
+
+        .footer-links {
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+            gap: 1rem;
+        }
+
+        @media (min-width: 640px) {
+            .footer-links {
+                flex-direction: row;
+                gap: 2rem;
+            }
+        }
+
+        .footer-link {
+            color: var(--footer-text);
+            text-decoration: none;
+            display: flex;
+            align-items: center;
+            gap: 0.5rem;
+            transition: opacity 0.2s;
+        }
+
+        .footer-link:hover {
+            opacity: 0.75;
+        }
+
+        .footer-logo {
+            transition: transform 0.3s;
+        }
+
+        .footer-logo:hover {
+            transform: scale(1.05);
+        }
+
+        .footer-logo img {
+            width: 64px;
+            height: 64px;
+            border-radius: 50%;
+            box-shadow: 0 4px 6px rgba(0,0,0,0.1);
+            border: 2px solid white;
+        }
+    </style>
+</head>
+<body>
+    <div id="root"></div>
+
+    <script type="text/babel">
+        const { useState, useMemo } = React;
+        
+        // 顏色配置
+        const COLORS = {
+            primary: '#2D5975',
+            secondary: '#708238',
+            accent: '#C3B091',
+            background: '#F5F2EB',
+            cardBg: '#D9C8B4',
+            text: '#1A2E3B',
+            white: '#FFFFFF',
+            warning: '#E6A23C',
+            danger: '#D9534F',
+            footerText: '#7F867B'
+        };
+
+        // 完整數據列表
+        const INITIAL_DATA = [
+            { 
+                id: 1, 
+                name: 'EdgeX', 
+                tier: 'T1',
+                chain: 'Multi Chain', 
+                points_program: 'Active', 
+                volume_24h: 3300000000, 
+                oi: 820000000,
+                fdv_low: 1.0, 
+                fdv_high: 2.0, 
+                poly_vol: '745K',
+                note: ''
+            },
+            { 
+                id: 2, 
+                name: 'StandX', 
+                tier: 'T1',
+                chain: 'Multi Chain', 
+                points_program: 'Active', 
+                volume_24h: 175000000, 
+                oi: 20000000,
+                fdv_low: 0.8, 
+                fdv_high: 1.0, 
+                poly_vol: '410K',
+                note: ''
+            },
+            { 
+                id: 3, 
+                name: 'Backpack', 
+                tier: 'T1',
+                chain: 'N/A', 
+                points_program: 'Season 4', 
+                volume_24h: 1265201632, 
+                oi: 255202649,
+                fdv_low: 0.7, 
+                fdv_high: 1.0, 
+                poly_vol: '290K',
+                note: ''
+            },
+            { 
+                id: 4, 
+                name: 'Ostium', 
+                tier: 'T2',
+                chain: 'Multi Chain', 
+                points_program: 'Season 2', 
+                volume_24h: 178955155, 
+                oi: 40452297,
+                fdv_low: 0.7, 
+                fdv_high: 1.0, 
+                poly_vol: '7K',
+                note: '應該會加開更低的 FDV'
+            },
+            { 
+                id: 5, 
+                name: 'Variational', 
+                tier: 'T2',
+                chain: 'Arbitrum', 
+                points_program: 'Season 1', 
+                volume_24h: 812600000, 
+                oi: 1550000000,
+                fdv_low: 0.5, 
+                fdv_high: 0.8, 
+                poly_vol: '15K',
+                note: '當前最早期'
+            },
+            { 
+                id: 6, 
+                name: 'Paradex', 
+                tier: 'T2',
+                chain: 'Multi Chain', 
+                points_program: 'Live', 
+                volume_24h: 1777585011, 
+                oi: 781135243,
+                fdv_low: 0.3, 
+                fdv_high: 0.5, 
+                poly_vol: '6K',
+                note: '積分活動尾聲'
+            },
+            { 
+                id: 7, 
+                name: 'Extended', 
+                tier: 'T3',
+                chain: 'Multi Chain', 
+                points_program: 'Live', 
+                volume_24h: 1395835456, 
+                oi: 202123228,
+                fdv_low: 0.3, 
+                fdv_high: 0.5, 
+                poly_vol: '61K',
+                note: ''
+            },
+            { 
+                id: 8, 
+                name: 'Pacifica', 
+                tier: 'T3',
+                chain: 'Solana', 
+                points_program: 'Live', 
+                volume_24h: 700387954, 
+                oi: 78138297,
+                fdv_low: 0.3, 
+                fdv_high: 0.5, 
+                poly_vol: '7K',
+                note: '前 FTX COO 創立'
+            },
+            { 
+                id: 9, 
+                name: 'GRVT',
+                tier: 'T2', 
+                chain: 'Multi Chain', 
+                points_program: 'Live', 
+                volume_24h: 1000000000, 
+                oi: 370000000,
+                fdv_low: 0.2, 
+                fdv_high: 0.3, 
+                poly_vol: '46K',
+                note: ''
+            },
+            { 
+                id: 10, 
+                name: 'Reya', 
+                tier: 'T3',
+                chain: 'Reya Network', 
+                points_program: 'OG', 
+                volume_24h: 45000000, 
+                oi: 22000000,
+                fdv_low: 0.15, 
+                fdv_high: 0.2, 
+                poly_vol: '32K',
+                note: ''
+            }
+        ];
+
+        const formatCurrency = (value) => {
+            if (value >= 1000000000) {
+                return `$${(value / 1000000000).toFixed(2)}B`;
+            }
+            if (value >= 1000000) {
+                return `$${(value / 1000000).toFixed(1)}M`;
+            }
+            return `$${value.toLocaleString()}`;
+        };
+
+        const getVolOiStatus = (vol, oi) => {
+            if (!oi || oi === 0) return { ratio: 0, color: 'ratio-healthy', label: 'N/A' };
+            
+            const ratio = vol / oi;
+            let color = 'ratio-healthy';
+            let label = 'Healthy';
+
+            if (ratio > 20) {
+                color = 'ratio-overheated';
+                label = 'Overheated';
+            } else if (ratio > 10) {
+                color = 'ratio-elevated';
+                label = 'Elevated';
+            }
+
+            return { ratio: ratio.toFixed(1), color, label };
+        };
+
+        // 圖表組件
+        const FDVChart = ({ data }) => {
+            const chartData = data.map(item => ({
+                name: item.name,
+                fdv_high: item.fdv_high,
+                fdv_low: item.fdv_low
+            }));
+
+            return (
+                <div className="chart-container">
+                    <Recharts.ComposedChart
+                        layout="vertical"
+                        data={chartData}
+                        margin={{ top: 20, right: 30, bottom: 20, left: 60 }}
+                    >
+                        <Recharts.CartesianGrid strokeDasharray="3 3" horizontal={false} stroke="#e5e5e5" />
+                        <Recharts.XAxis type="number" unit="B" domain={[0, 'auto']} tick={{fill: COLORS.text}} />
+                        <Recharts.YAxis dataKey="name" type="category" width={100} tick={{fill: COLORS.primary, fontWeight: 600, fontSize: 12}} />
+                        <Recharts.Tooltip 
+                            contentStyle={{ borderRadius: '8px', border: `1px solid ${COLORS.accent}` }}
+                            formatter={(value, name) => [`$${value}B`, name === 'fdv_high' ? 'High Est.' : (name === 'fdv_low' ? 'Low Est.' : name)]}
+                        />
+                        <Recharts.Legend />
+                        <Recharts.Bar dataKey="fdv_low" stackId="a" fill="transparent" />
+                        <Recharts.Bar name="FDV Range" dataKey="fdv_high" stackId="a" fill={COLORS.secondary} barSize={24} radius={[0, 4, 4, 0]} />
+                    </Recharts.ComposedChart>
+                </div>
+            );
+        };
+
+        const HotnessList = ({ data }) => {
+            const sortedData = [...data].sort((a, b) => 
+                parseFloat(b.poly_vol.replace('K','')) - parseFloat(a.poly_vol.replace('K',''))
+            );
+
+            return (
+                <div className="hotness-list">
+                    {sortedData.map((item, idx) => (
+                        <div key={item.id} className="hotness-item">
+                            <div className="hotness-info">
+                                <span className="hotness-rank">#{idx + 1}</span>
+                                <div style={{marginLeft: '0.75rem'}}>
+                                    <div className="hotness-name">{item.name}</div>
+                                    <div className="hotness-fdv">FDV High: ${item.fdv_high}B</div>
+                                </div>
+                            </div>
+                            <div className="hotness-volume">
+                                <div className="hotness-volume-value">{item.poly_vol}</div>
+                                <div className="hotness-volume-label">Vol/Bets</div>
+                            </div>
+                        </div>
+                    ))}
+                </div>
+            );
+        };
+
+        function App() {
+            const [data, setData] = useState(INITIAL_DATA);
+            const [sortConfig, setSortConfig] = useState({ key: 'fdv_high', direction: 'desc' });
+            const [lastUpdated, setLastUpdated] = useState(new Date().toLocaleTimeString());
+            const [searchTerm, setSearchTerm] = useState('');
+
+            const refreshData = () => {
+                const newData = data.map(item => ({
+                    ...item,
+                    volume_24h: item.volume_24h * (1 + (Math.random() * 0.1 - 0.05)),
+                    oi: item.oi * (1 + (Math.random() * 0.05 - 0.025)),
+                }));
+                setData(newData);
+                setLastUpdated(new Date().toLocaleTimeString());
+            };
+
+            const sortedData = useMemo(() => {
+                let sortableItems = [...data];
+                if (searchTerm) {
+                    sortableItems = sortableItems.filter(item => 
+                        item.name.toLowerCase().includes(searchTerm.toLowerCase()) ||
+                        item.chain.toLowerCase().includes(searchTerm.toLowerCase())
+                    );
+                }
+                
+                sortableItems = sortableItems.map(item => ({
+                    ...item,
+                    volOiRatio: item.oi ? item.volume_24h / item.oi : 0
+                }));
+
+                if (sortConfig !== null) {
+                    sortableItems.sort((a, b) => {
+                        let aValue = a[sortConfig.key];
+                        let bValue = b[sortConfig.key];
+
+                        if (sortConfig.key === 'vol_oi_ratio') {
+                           aValue = a.volOiRatio;
+                           bValue = b.volOiRatio;
+                        }
+
+                        if (aValue < bValue) {
+                            return sortConfig.direction === 'asc' ? -1 : 1;
+                        }
+                        if (aValue > bValue) {
+                            return sortConfig.direction === 'asc' ? 1 : -1;
+                        }
+                        return 0;
+                    });
+                }
+                return sortableItems;
+            }, [data, sortConfig, searchTerm]);
+
+            const requestSort = (key) => {
+                let direction = 'asc';
+                if (sortConfig.key === key && sortConfig.direction === 'asc') {
+                    direction = 'desc';
+                }
+                setSortConfig({ key, direction });
+            };
+
+            const totalVolume = data.reduce((acc, curr) => acc + curr.volume_24h, 0);
+            const totalOI = data.reduce((acc, curr) => acc + curr.oi, 0);
+
+            // 創建圖標組件
+            const Icon = ({ name, size = 20, color = "currentColor" }) => {
+                const icons = {
+                    activity: (
+                        <svg width={size} height={size} viewBox="0 0 24 24" fill="none" stroke={color} strokeWidth="2">
+                            <path d="M22 12h-4l-3 9L9 3l-3 9H2"/>
+                        </svg>
+                    ),
+                    trendingUp: (
+                        <svg width={size} height={size} viewBox="0 0 24 24" fill="none" stroke={color} strokeWidth="2">
+                            <polyline points="23 6 13.5 15.5 8.5 10.5 1 18"/>
+                            <polyline points="17 6 23 6 23 12"/>
+                        </svg>
+                    ),
+                    barChart3: (
+                        <svg width={size} height={size} viewBox="0 0 24 24" fill="none" stroke={color} strokeWidth="2">
+                            <path d="M3 3v18h18"/>
+                            <path d="M18 17V9"/>
+                            <path d="M13 17V5"/>
+                            <path d="M8 17v-3"/>
+                        </svg>
+                    ),
+                    coins: (
+                        <svg width={size} height={size} viewBox="0 0 24 24" fill="none" stroke={color} strokeWidth="2">
+                            <circle cx="8" cy="8" r="6"/>
+                            <path d="M15 13a6 6 0 0 1 0 12H8"/>
+                        </svg>
+                    ),
+                    search: (
+                        <svg width={size} height={size} viewBox="0 0 24 24" fill="none" stroke={color} strokeWidth="2">
+                            <circle cx="11" cy="11" r="8"/>
+                            <path d="m21 21-4.35-4.35"/>
+                        </svg>
+                    ),
+                    refreshCcw: (
+                        <svg width={size} height={size} viewBox="0 0 24 24" fill="none" stroke={color} strokeWidth="2">
+                            <path d="M3 12a9 9 0 0 1 9-9 9.75 9.75 0 0 1 6.74 2.74L21 8"/>
+                            <path d="M21 3v5h-5"/>
+                            <path d="M21 12a9 9 0 0 1-9 9 9.75 9.75 0 0 1-6.74-2.74L3 16"/>
+                            <path d="M8 16H3v5"/>
+                        </svg>
+                    ),
+                    arrowUpDown: (
+                        <svg width={size} height={size} viewBox="0 0 24 24" fill="none" stroke={color} strokeWidth="2">
+                            <path d="m21 16-4 4-4-4"/>
+                            <path d="M17 20V4"/>
+                            <path d="m3 8 4-4 4 4"/>
+                            <path d="M7 4v16"/>
+                        </svg>
+                    ),
+                    info: (
+                        <svg width={size} height={size} viewBox="0 0 24 24" fill="none" stroke={color} strokeWidth="2">
+                            <circle cx="12" cy="12" r="10"/>
+                            <line x1="12" y1="16" x2="12" y2="12"/>
+                            <line x1="12" y1="8" x2="12.01" y2="8"/>
+                        </svg>
+                    ),
+                    alertCircle: (
+                        <svg width={size} height={size} viewBox="0 0 24 24" fill="none" stroke={color} strokeWidth="2">
+                            <circle cx="12" cy="12" r="10"/>
+                            <line x1="12" y1="8" x2="12" y2="12"/>
+                            <line x1="12" y1="16" x2="12.01" y2="16"/>
+                        </svg>
+                    ),
+                    scale: (
+                        <svg width={size} height={size} viewBox="0 0 24 24" fill="none" stroke={color} strokeWidth="2">
+                            <path d="M16 4h2a2 2 0 0 1 2 2v14a2 2 0 0 1-2 2H6a2 2 0 0 1-2-2V6a2 2 0 0 1 2-2h2"/>
+                            <rect x="8" y="2" width="8" height="4" rx="1" ry="1"/>
+                        </svg>
+                    )
+                };
+                return icons[name] || null;
+            };
+
+            return (
+                <div className="min-h-screen font-sans" style={{ backgroundColor: COLORS.background, color: COLORS.text }}>
+                    
+                    {/* 頂部導航列 */}
+                    <nav style={{ backgroundColor: COLORS.primary }}>
+                        <div className="container">
+                            <div className="nav-content">
+                                <div className="nav-brand">
+                                    <Icon name="activity" size={28} color="white" />
+                                    <span className="nav-brand-title">PerpMarket <span className="accent">Alpha</span></span>
+                                </div>
+                                <div className="nav-info">
+                                    <span className="nav-source">Data Source: Polymarket / DefiLlama</span>
+                                    <div className="live-indicator">
+                                        <div className="live-dot"></div>
+                                        Live
+                                    </div>
+                                </div>
+                            </div>
+                        </div>
+                    </nav>
+
+                    <main className="container">
+                        
+                        {/* 控制與標題區 */}
+                        <div className="header-section">
+                            <div className="header-title">
+                                <h1>市場估值與發幣預期</h1>
+                                <p>Perp DEX 積分、OI 與 Polymarket FDV 預測監控</p>
+                            </div>
+                            <div className="controls">
+                                <div className="search-box">
+                                    <Icon name="search" size={16} className="search-icon" />
+                                    <input 
+                                        type="text" 
+                                        placeholder="Search Protocol..." 
+                                        value={searchTerm}
+                                        onChange={(e) => setSearchTerm(e.target.value)}
+                                    />
+                                </div>
+                                <button className="btn" onClick={refreshData}>
+                                    <Icon name="refreshCcw" size={16} />
+                                    Refresh
+                                </button>
+                            </div>
+                        </div>
+
+                        {/* 概覽卡片 */}
+                        <div className="card-grid">
+                            <div className="card">
+                                <div className="card-header">
+                                    <div>
+                                        <div className="card-title">TOP FDV PREDICTION</div>
+                                        <div className="card-value">EdgeX</div>
+                                        <div className="card-subvalue">Est. $1B - $2B</div>
+                                    </div>
+                                    <div className="card-icon">
+                                        <Icon name="trendingUp" />
+                                    </div>
+                                </div>
+                            </div>
+                            <div className="card">
+                                <div className="card-header">
+                                    <div>
+                                        <div className="card-title">TOTAL 24H VOLUME</div>
+                                        <div className="card-value">{formatCurrency(totalVolume)}</div>
+                                        <div className="card-subvalue">Across tracked DEXs</div>
+                                    </div>
+                                    <div className="card-icon">
+                                        <Icon name="barChart3" />
+                                    </div>
+                                </div>
+                            </div>
+                            <div className="card">
+                                <div className="card-header">
+                                    <div>
+                                        <div className="card-title">TOTAL OPEN INTEREST</div>
+                                        <div className="card-value">{formatCurrency(totalOI)}</div>
+                                        <div className="card-subvalue">Market Depth</div>
+                                    </div>
+                                    <div className="card-icon">
+                                        <Icon name="activity" />
+                                    </div>
+                                </div>
+                            </div>
+                            <div className="card">
+                                <div className="card-header">
+                                    <div>
+                                        <div className="card-title">TRACKED PROTOCOLS</div>
+                                        <div className="card-value">{data.length}</div>
+                                        <div className="card-subvalue">Polymarket Listed</div>
+                                    </div>
+                                    <div className="card-icon">
+                                        <Icon name="coins" />
+                                    </div>
+                                </div>
+                            </div>
+                        </div>
+
+                        {/* 主要圖表與數據區 */}
+                        <div className="charts-grid">
+                            
+                            {/* 左側：Polymarket FDV 預測視覺化 */}
+                            <div className="chart-card" style={{ borderColor: COLORS.primary }}>
+                                <div className="chart-title">
+                                    <Icon name="trendingUp" />
+                                    Polymarket FDV 預測區間 (Billion $)
+                                </div>
+                                <FDVChart data={sortedData} />
+                            </div>
+
+                            {/* 右側：Poly 關注度 (Volume/User) */}
+                            <div className="chart-card" style={{ borderColor: COLORS.accent }}>
+                                <div className="chart-title">
+                                    <Icon name="coins" />
+                                    Polymarket 熱度 (Vol)
+                                </div>
+                                <HotnessList data={data} />
+                            </div>
+                        </div>
+
+                        {/* 詳細數據表格 */}
+                        <div className="table-card">
+                            <div className="table-header">
+                                <div className="table-title">詳細市場數據</div>
+                                
+                                {/* 備註圖例 */}
+                                <div className="table-legend">
+                                    <span className="font-bold text-gray-600 flex items-center gap-1">
+                                        <Icon name="scale" size={12} />
+                                        Vol/OI Ratio:
+                                    </span>
+                                    <span className="legend-item">
+                                        <div className="legend-dot" style={{background: '#10b981'}}></div> 健康 (低)
+                                    </span>
+                                    <span className="legend-item">
+                                        <div className="legend-dot" style={{background: '#f59e0b'}}></div> 偏高
+                                    </span>
+                                    <span className="legend-item">
+                                        <div className="legend-dot" style={{background: '#ef4444'}}></div> 過熱 (高)
+                                    </span>
+                                    <span style={{color: '#9ca3af', marginLeft: '0.5rem', borderLeft: '1px solid #d1d5db', paddingLeft: '0.5rem'}}>數字越小越健康</span>
+                                </div>
+                            </div>
+                            
+                            <div className="table-wrapper">
+                                <table>
+                                    <thead>
+                                        <tr>
+                                            <th onClick={() => requestSort('name')}>
+                                                <div style={{display: 'flex', alignItems: 'center', gap: '4px'}}>
+                                                    Protocol
+                                                    <Icon name="arrowUpDown" size={14} />
+                                                </div>
+                                            </th>
+                                            <th className="right" onClick={() => requestSort('volume_24h')}>
+                                                <div style={{display: 'flex', alignItems: 'center', gap: '4px', justifyContent: 'flex-end'}}>
+                                                    24h Vol
+                                                    <Icon name="arrowUpDown" size={14} />
+                                                </div>
+                                            </th>
+                                            <th className="right" onClick={() => requestSort('oi')}>
+                                                <div style={{display: 'flex', alignItems: 'center', gap: '4px', justifyContent: 'flex-end'}}>
+                                                    Open Interest
+                                                    <Icon name="arrowUpDown" size={14} />
+                                                </div>
+                                            </th>
+                                            <th className="center" onClick={() => requestSort('vol_oi_ratio')}>
+                                                <div style={{display: 'flex', alignItems: 'center', gap: '4px', justifyContent: 'center'}}>
+                                                    Vol / OI Ratio
+                                                    <Icon name="info" size={12} />
+                                                    <Icon name="arrowUpDown" size={14} />
+                                                </div>
+                                            </th>
+                                            <th className="right" onClick={() => requestSort('poly_vol')}>
+                                                <div style={{display: 'flex', alignItems: 'center', gap: '4px', justifyContent: 'flex-end'}}>
+                                                    Poly. Vol
+                                                    <Icon name="arrowUpDown" size={14} />
+                                                </div>
+                                            </th>
+                                            <th className="right" onClick={() => requestSort('fdv_high')}>
+                                                <div style={{display: 'flex', alignItems: 'center', gap: '4px', justifyContent: 'flex-end'}}>
+                                                    FDV High
+                                                    <Icon name="arrowUpDown" size={14} />
+                                                </div>
+                                            </th>
+                                            <th style={{ backgroundColor: COLORS.primary, color: COLORS.white }}>Notes</th>
+                                        </tr>
+                                    </thead>
+                                    <tbody>
+                                        {sortedData.map((row, index) => {
+                                            const volOiStatus = getVolOiStatus(row.volume_24h, row.oi);
+                                            
+                                            return (
+                                                <tr key={row.id}>
+                                                    <td>
+                                                        <div className="protocol-cell">
+                                                            <div className={`protocol-indicator ${index < 3 ? 'top' : 'normal'}`}></div>
+                                                            <div className="protocol-info">
+                                                                <div className="name">{row.name}</div>
+                                                                <div className="chain">{row.chain}</div>
+                                                            </div>
+                                                        </div>
+                                                    </td>
+                                                    <td className="number-cell volume-cell">
+                                                        {formatCurrency(row.volume_24h)}
+                                                    </td>
+                                                    <td className="number-cell oi-cell">
+                                                        {formatCurrency(row.oi)}
+                                                    </td>
+                                                    
+                                                    {/* Vol / OI Ratio Column */}
+                                                    <td className="center">
+                                                        <div className={`ratio-badge ${volOiStatus.color}`}>
+                                                            {volOiStatus.ratio}x
+                                                        </div>
+                                                    </td>
+
+                                                    <td className="right">
+                                                        <span className="poly-volume">{row.poly_vol}</span>
+                                                    </td>
+                                                    <td className="number-cell fdv-cell right">
+                                                        ${row.fdv_high}B
+                                                    </td>
+                                                    <td>
+                                                        {row.note && (
+                                                            <div className="note-badge" title={row.note}>
+                                                                <Icon name="alertCircle" size={12} />
+                                                                {row.note}
+                                                            </div>
+                                                        )}
+                                                    </td>
+                                                </tr>
+                                            );
+                                        })}
+                                    </tbody>
+                                </table>
+                            </div>
+                            <div className="table-footer">
+                                Last updated: {lastUpdated} • Vol/OI logic: Lower ratio indicates healthier organic growth vs speculative wash trading.
+                            </div>
+                        </div>
+
+                    </main>
+
+                    {/* Footer Section */}
+                    <footer style={{ color: COLORS.footerText, backgroundColor: COLORS.background }}>
+                        <div className="footer-links">
+                            <a 
+                                href="https://x.com/Alvin0617" 
+                                target="_blank" 
+                                rel="noopener noreferrer" 
+                                className="footer-link"
+                            >
+                                made by @alvin0617
+                            </a>
+                            <span className="footer-separator">|</span>
+                            <a 
+                                href="https://t.me/variational_cn" 
+                                target="_blank" 
+                                rel="noopener noreferrer" 
+                                className="footer-link"
+                            >
+                                Join Variational CW
+                            </a>
+                        </div>
+                        <a 
+                            href="https://x.com/CryptoWesearch" 
+                            target="_blank" 
+                            rel="noopener noreferrer"
+                            className="footer-logo"
+                        >
+                            <img 
+                                src="https://pbs.twimg.com/profile_images/1608304695776509954/gaWpTcjW_400x400.jpg" 
+                                alt="Logo" 
+                            />
+                        </a>
+                    </footer>
+
+                </div>
+            );
+        }
+
+        // 渲染應用
+        ReactDOM.render(<App />, document.getElementById('root'));
+    </script>
+</body>
+</html>
