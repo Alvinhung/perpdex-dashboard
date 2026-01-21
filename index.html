@@ -1,13 +1,1356 @@
-<!doctype html>
-<html lang="en">
-  <head>
-    <meta charset="UTF-8" />
-    <link rel="icon" type="image/svg+xml" href="/vite.svg" />
-    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
-    <title>perpdex-dashboard</title>
-  </head>
-  <body>
-    <div id="root"></div>
-    <script type="module" src="/src/main.tsx"></script>
-  </body>
+<!DOCTYPE html>
+<html lang="zh-TW">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>PerpMarket Alpha - 市場估值與發幣預期</title>
+    <style>
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+        }
+        
+        body {
+            font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, sans-serif;
+            background-color: #F5F2EB;
+            color: #1A2E3B;
+            line-height: 1.6;
+        }
+
+        .container {
+            max-width: 1280px;
+            margin: 0 auto;
+            padding: 0 1rem;
+        }
+
+        /* 顏色配置 */
+        :root {
+            --primary: #2D5975;
+            --secondary: #708238;
+            --accent: #C3B091;
+            --background: #F5F2EB;
+            --card-bg: #D9C8B4;
+            --text: #1A2E3B;
+            --white: #FFFFFF;
+            --warning: #E6A23C;
+            --danger: #D9534F;
+            --footer-text: #7F867B;
+        }
+
+        /* 導航列 */
+        nav {
+            background-color: var(--primary);
+            box-shadow: 0 2px 4px rgba(0,0,0,0.1);
+        }
+
+        .nav-content {
+            display: flex;
+            align-items: center;
+            justify-content: space-between;
+            height: 64px;
+        }
+
+        .nav-brand {
+            display: flex;
+            align-items: center;
+            gap: 0.75rem;
+        }
+
+        .nav-brand h1 {
+            color: white;
+            font-size: 1.25rem;
+            font-weight: bold;
+        }
+
+        .nav-brand .accent {
+            color: var(--accent);
+        }
+
+        .nav-info {
+            display: flex;
+            align-items: center;
+            gap: 1rem;
+            color: white;
+            font-size: 0.875rem;
+            opacity: 0.9;
+        }
+
+        .live-indicator {
+            display: flex;
+            align-items: center;
+            gap: 0.5rem;
+            background: rgba(0,0,0,0.2);
+            padding: 0.25rem 0.75rem;
+            border-radius: 9999px;
+        }
+
+        .live-dot {
+            width: 8px;
+            height: 8px;
+            background: #4ade80;
+            border-radius: 50%;
+            animation: pulse 2s infinite;
+        }
+
+        @keyframes pulse {
+            0%, 100% { opacity: 1; }
+            50% { opacity: 0.5; }
+        }
+
+        /* 主要內容 */
+        main {
+            padding: 2rem 0;
+        }
+
+        .header-section {
+            display: flex;
+            justify-content: space-between;
+            align-items: flex-start;
+            margin-bottom: 2rem;
+            gap: 1rem;
+        }
+
+        @media (max-width: 768px) {
+            .header-section {
+                flex-direction: column;
+            }
+        }
+
+        .header-title h1 {
+            color: var(--primary);
+            font-size: 1.875rem;
+            font-weight: bold;
+            margin-bottom: 0.25rem;
+        }
+
+        .header-title p {
+            color: var(--secondary);
+            font-size: 0.875rem;
+        }
+
+        .controls {
+            display: flex;
+            align-items: center;
+            gap: 0.75rem;
+        }
+
+        .search-box {
+            position: relative;
+        }
+
+        .search-box input {
+            padding: 0.5rem 1rem 0.5rem 2.5rem;
+            border: 1px solid var(--accent);
+            border-radius: 0.5rem;
+            font-size: 0.875rem;
+            outline: none;
+            transition: all 0.2s;
+        }
+
+        .search-box input:focus {
+            border-color: var(--primary);
+            box-shadow: 0 0 0 2px rgba(45, 89, 117, 0.2);
+        }
+
+        .search-icon {
+            position: absolute;
+            left: 0.75rem;
+            top: 50%;
+            transform: translateY(-50%);
+            opacity: 0.4;
+        }
+
+        .btn {
+            display: flex;
+            align-items: center;
+            gap: 0.5rem;
+            padding: 0.5rem 1rem;
+            background-color: var(--secondary);
+            color: white;
+            border: none;
+            border-radius: 0.5rem;
+            font-size: 0.875rem;
+            cursor: pointer;
+            transition: all 0.2s;
+        }
+
+        .btn:hover {
+            opacity: 0.9;
+        }
+
+        .btn:active {
+            transform: scale(0.95);
+        }
+
+        /* 卡片網格 */
+        .card-grid {
+            display: grid;
+            grid-template-columns: repeat(auto-fit, minmax(240px, 1fr));
+            gap: 1.5rem;
+            margin-bottom: 2rem;
+        }
+
+        .card {
+            background: white;
+            border-radius: 0.75rem;
+            padding: 1.5rem;
+            box-shadow: 0 4px 6px rgba(0,0,0,0.1);
+            border-left: 4px solid var(--secondary);
+        }
+
+        .card-header {
+            display: flex;
+            justify-content: space-between;
+            align-items: flex-start;
+        }
+
+        .card-title {
+            color: var(--secondary);
+            font-size: 0.875rem;
+            font-weight: bold;
+            letter-spacing: 0.05em;
+            margin-bottom: 0.25rem;
+        }
+
+        .card-value {
+            color: var(--primary);
+            font-size: 1.5rem;
+            font-weight: bold;
+        }
+
+        .card-subvalue {
+            color: var(--text);
+            font-size: 0.75rem;
+            opacity: 0.7;
+            margin-top: 0.25rem;
+        }
+
+        .card-icon {
+            padding: 0.75rem;
+            background: rgba(195, 176, 145, 0.3);
+            border-radius: 50%;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+        }
+
+        .card-icon svg {
+            color: var(--primary);
+        }
+
+        /* 圖表區域 */
+        .charts-grid {
+            display: grid;
+            grid-template-columns: 2fr 1fr;
+            gap: 2rem;
+            margin-bottom: 2rem;
+        }
+
+        @media (max-width: 1024px) {
+            .charts-grid {
+                grid-template-columns: 1fr;
+            }
+        }
+
+        .chart-card {
+            background: white;
+            border-radius: 0.75rem;
+            padding: 1.5rem;
+            box-shadow: 0 4px 6px rgba(0,0,0,0.1);
+            border-top: 4px solid var(--primary);
+        }
+
+        .chart-title {
+            color: var(--primary);
+            font-size: 1.125rem;
+            font-weight: bold;
+            margin-bottom: 1.5rem;
+            display: flex;
+            align-items: center;
+            gap: 0.5rem;
+        }
+
+        .chart-container {
+            height: 350px;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            background: #f9fafb;
+            border-radius: 0.5rem;
+            color: #6b7280;
+            font-size: 0.875rem;
+        }
+
+        /* 熱度列表 */
+        .hotness-list {
+            max-height: 350px;
+            overflow-y: auto;
+            padding-right: 0.5rem;
+        }
+
+        .hotness-item {
+            display: flex;
+            align-items: center;
+            justify-content: space-between;
+            padding: 0.75rem;
+            border-bottom: 1px solid #f3f4f6;
+            transition: background 0.2s;
+        }
+
+        .hotness-item:hover {
+            background: #f9fafb;
+        }
+
+        .hotness-item:last-child {
+            border-bottom: none;
+        }
+
+        .hotness-rank {
+            font-family: monospace;
+            font-size: 0.75rem;
+            font-weight: bold;
+            color: #9ca3af;
+            width: 1rem;
+        }
+
+        .hotness-info {
+            flex: 1;
+            margin-left: 0.75rem;
+        }
+
+        .hotness-name {
+            color: var(--primary);
+            font-weight: bold;
+            font-size: 0.875rem;
+        }
+
+        .hotness-fdv {
+            color: #6b7280;
+            font-size: 0.75rem;
+        }
+
+        .hotness-volume {
+            text-align: right;
+        }
+
+        .hotness-volume-value {
+            color: var(--secondary);
+            font-weight: bold;
+            font-size: 0.875rem;
+        }
+
+        .hotness-volume-label {
+            color: #9ca3af;
+            font-size: 0.75rem;
+        }
+
+        /* 表格 */
+        .table-card {
+            background: white;
+            border-radius: 0.75rem;
+            box-shadow: 0 4px 6px rgba(0,0,0,0.1);
+            overflow: hidden;
+            border: 1px solid #e5e7eb;
+        }
+
+        .table-header {
+            padding: 1rem;
+            border-bottom: 1px solid #e5e7eb;
+            background: #f9fafb;
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            gap: 1rem;
+        }
+
+        .table-title {
+            color: var(--primary);
+            font-weight: bold;
+        }
+
+        .table-legend {
+            display: flex;
+            align-items: center;
+            gap: 0.75rem;
+            font-size: 0.75rem;
+            background: #f3f4f6;
+            padding: 0.5rem 0.75rem;
+            border-radius: 0.5rem;
+        }
+
+        .legend-item {
+            display: flex;
+            align-items: center;
+            gap: 0.25rem;
+        }
+
+        .legend-dot {
+            width: 8px;
+            height: 8px;
+            border-radius: 50%;
+        }
+
+        .table-wrapper {
+            overflow-x: auto;
+        }
+
+        table {
+            width: 100%;
+            border-collapse: collapse;
+        }
+
+        th {
+            background: var(--primary);
+            color: white;
+            padding: 1rem;
+            text-align: left;
+            font-size: 0.75rem;
+            font-weight: bold;
+            text-transform: uppercase;
+            letter-spacing: 0.05em;
+            cursor: pointer;
+            user-select: none;
+            transition: background 0.2s;
+        }
+
+        th:hover {
+            opacity: 0.8;
+        }
+
+        th.right {
+            text-align: right;
+        }
+
+        th.center {
+            text-align: center;
+        }
+
+        td {
+            padding: 1rem;
+            border-bottom: 1px solid #f3f4f6;
+            font-size: 0.875rem;
+        }
+
+        tr:hover {
+            background: #f9fafb;
+        }
+
+        .protocol-cell {
+            display: flex;
+            align-items: center;
+            gap: 0.75rem;
+        }
+
+        .protocol-indicator {
+            width: 8px;
+            height: 32px;
+            border-radius: 4px;
+        }
+
+        .protocol-indicator.top {
+            background: var(--secondary);
+        }
+
+        .protocol-indicator.normal {
+            background: #d1d5db;
+        }
+
+        .protocol-info .name {
+            color: var(--primary);
+            font-weight: bold;
+            font-size: 1rem;
+        }
+
+        .protocol-info .chain {
+            color: #9ca3af;
+            font-size: 0.75rem;
+        }
+
+        .number-cell {
+            font-family: monospace;
+            font-weight: 500;
+        }
+
+        .volume-cell {
+            color: #374151;
+        }
+
+        .oi-cell {
+            color: #6b7280;
+        }
+
+        .ratio-badge {
+            display: inline-flex;
+            align-items: center;
+            padding: 0.25rem 0.625rem;
+            border-radius: 9999px;
+            font-size: 0.75rem;
+            font-weight: bold;
+        }
+
+        .ratio-healthy {
+            color: #15803d;
+            background: #dcfce7;
+        }
+
+        .ratio-elevated {
+            color: #b45309;
+            background: #fef3c7;
+        }
+
+        .ratio-overheated {
+            color: #b91c1c;
+            background: #fee2e2;
+        }
+
+        .poly-volume {
+            font-weight: bold;
+            padding: 0.25rem 0.5rem;
+            background: #f3f4f6;
+            border-radius: 0.25rem;
+            color: #374151;
+            font-size: 0.75rem;
+        }
+
+        .fdv-cell {
+            color: var(--secondary);
+            font-weight: bold;
+            font-family: monospace;
+        }
+
+        .note-cell {
+            max-width: 150px;
+        }
+
+        .note-badge {
+            display: flex;
+            align-items: center;
+            gap: 0.5rem;
+            padding: 0.25rem 0.5rem;
+            background: #fef3c7;
+            border: 1px solid #fcd34d;
+            border-radius: 0.25rem;
+            color: #b45309;
+            font-size: 0.75rem;
+            overflow: hidden;
+            text-overflow: ellipsis;
+            white-space: nowrap;
+        }
+
+        .table-footer {
+            padding: 1rem;
+            border-top: 1px solid #e5e7eb;
+            background: #f9fafb;
+            text-align: center;
+            font-size: 0.75rem;
+            color: #9ca3af;
+        }
+
+        /* 頁尾 */
+        footer {
+            background: var(--background);
+            border-top: 1px solid #e5e7eb;
+            padding: 3rem 0;
+            margin-top: 2rem;
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+            justify-content: center;
+            gap: 1.5rem;
+            color: var(--footer-text);
+            font-size: 0.875rem;
+            font-weight: 500;
+        }
+
+        .footer-links {
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+            gap: 1rem;
+        }
+
+        @media (min-width: 640px) {
+            .footer-links {
+                flex-direction: row;
+                gap: 2rem;
+            }
+        }
+
+        .footer-link {
+            color: var(--footer-text);
+            text-decoration: none;
+            display: flex;
+            align-items: center;
+            gap: 0.5rem;
+            transition: opacity 0.2s;
+        }
+
+        .footer-link:hover {
+            opacity: 0.75;
+        }
+
+        .footer-logo {
+            transition: transform 0.3s;
+        }
+
+        .footer-logo:hover {
+            transform: scale(1.05);
+        }
+
+        .footer-logo img {
+            width: 64px;
+            height: 64px;
+            border-radius: 50%;
+            box-shadow: 0 4px 6px rgba(0,0,0,0.1);
+            border: 2px solid white;
+        }
+
+        /* 簡單的圖表樣式 */
+        .bar-chart {
+            display: flex;
+            align-items: flex-end;
+            height: 300px;
+            gap: 8px;
+            padding: 20px;
+        }
+
+        .bar {
+            flex: 1;
+            background: var(--secondary);
+            border-radius: 4px 4px 0 0;
+            position: relative;
+            min-height: 20px;
+            transition: all 0.3s;
+        }
+
+        .bar:hover {
+            opacity: 0.8;
+        }
+
+        .bar-label {
+            position: absolute;
+            bottom: -25px;
+            left: 50%;
+            transform: translateX(-50%);
+            font-size: 10px;
+            color: var(--primary);
+            white-space: nowrap;
+        }
+
+        .bar-value {
+            position: absolute;
+            top: -20px;
+            left: 50%;
+            transform: translateX(-50%);
+            font-size: 10px;
+            color: var(--text);
+            font-weight: bold;
+        }
+
+        /* 機率懸停提示框 */
+        .tooltip {
+            position: absolute;
+            background: #E0F2FE;
+            color: #0C4A6E;
+            padding: 12px;
+            border-radius: 8px;
+            font-size: 12px;
+            z-index: 1000;
+            pointer-events: none;
+            opacity: 0;
+            transition: opacity 0.3s;
+            max-width: 200px;
+            border: 1px solid #BAE6FD;
+            box-shadow: 0 4px 6px rgba(0, 0, 0, 0.1);
+        }
+
+        .tooltip.show {
+            opacity: 1;
+        }
+
+        .tooltip-title {
+            font-weight: bold;
+            margin-bottom: 8px;
+            color: #0369A1;
+            font-size: 14px;
+        }
+
+        .tooltip-item {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            margin: 4px 0;
+            padding: 4px 0;
+            border-bottom: 1px solid #BAE6FD;
+        }
+
+        .tooltip-item:last-child {
+            border-bottom: none;
+        }
+
+        .tooltip-fdv {
+            font-weight: bold;
+            color: #0284C7;
+        }
+
+        .tooltip-prob {
+            background: #0EA5E9;
+            color: white;
+            padding: 2px 8px;
+            border-radius: 12px;
+            font-size: 11px;
+            font-weight: bold;
+        }
+
+        /* 更新時間標記 */
+        .update-badge {
+            display: inline-flex;
+            align-items: center;
+            gap: 0.5rem;
+            background: #fef3c7;
+            border: 1px solid #f59e0b;
+            color: #92400e;
+            padding: 0.5rem 1rem;
+            border-radius: 0.5rem;
+            font-size: 0.75rem;
+            font-weight: 500;
+            margin-left: 1rem;
+        }
+
+        .update-badge svg {
+            width: 16px;
+            height: 16px;
+        }
+    </style>
+</head>
+<body>
+    <div id="app">
+        <!-- 頂部導航列 -->
+        <nav>
+            <div class="container">
+                <div class="nav-content">
+                    <div class="nav-brand">
+                        <svg width="28" height="28" viewBox="0 0 24 24" fill="none" stroke="white" stroke-width="2">
+                            <path d="M22 12h-4l-3 9L9 3l-3 9H2"/>
+                        </svg>
+                        <h1>PerpMarket <span class="accent">Alpha</span></h1>
+                    </div>
+                    <div class="nav-info">
+                        <span>Data Source: Polymarket / DefiLlama</span>
+                        <div class="live-indicator">
+                            <div class="live-dot"></div>
+                            Live
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </nav>
+
+        <main class="container">
+            
+            <!-- 控制與標題區 -->
+            <div class="header-section">
+                <div class="header-title">
+                    <h1>市場估值與發幣預期</h1>
+                    <p>Perp DEX 積分、OI 與 Polymarket FDV 預測監控</p>
+                </div>
+                <div class="controls">
+                    <div class="search-box">
+                        <svg class="search-icon" width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+                            <circle cx="11" cy="11" r="8"/>
+                            <path d="m21 21-4.35-4.35"/>
+                        </svg>
+                        <input type="text" placeholder="Search Protocol..." id="searchInput">
+                    </div>
+                    <button class="btn" onclick="refreshData()">
+                        <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="white" stroke-width="2">
+                            <path d="M3 12a9 9 0 0 1 9-9 9.75 9.75 0 0 1 6.74 2.74L21 8"/>
+                            <path d="M21 3v5h-5"/>
+                            <path d="M21 12a9 9 0 0 1-9 9 9.75 9.75 0 0 1-6.74-2.74L3 16"/>
+                            <path d="M8 16H3v5"/>
+                        </svg>
+                        Refresh
+                    </button>
+                </div>
+            </div>
+
+            <!-- 概覽卡片 -->
+            <div class="card-grid">
+                <div class="card">
+                    <div class="card-header">
+                        <div>
+                            <div class="card-title">TOP FDV PREDICTION</div>
+                            <div class="card-value">EdgeX</div>
+                            <div class="card-subvalue">Est. $1B - $2B</div>
+                        </div>
+                        <div class="card-icon">
+                            <svg width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+                                <polyline points="23 6 13.5 15.5 8.5 10.5 1 18"/>
+                                <polyline points="17 6 23 6 23 12"/>
+                            </svg>
+                        </div>
+                    </div>
+                </div>
+                <div class="card">
+                    <div class="card-header">
+                        <div>
+                            <div class="card-title">TOTAL 24H VOLUME</div>
+                            <div class="card-value" id="totalVolume">$11.4B</div>
+                            <div class="card-subvalue">Across tracked DEXs</div>
+                        </div>
+                        <div class="card-icon">
+                            <svg width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+                                <path d="M3 3v18h18"/>
+                                <path d="M18 17V9"/>
+                                <path d="M13 17V5"/>
+                                <path d="M8 17v-3"/>
+                            </svg>
+                        </div>
+                    </div>
+                </div>
+                <div class="card">
+                    <div class="card-header">
+                        <div>
+                            <div class="card-title">TOTAL OPEN INTEREST</div>
+                            <div class="card-value" id="totalOI">$3.8B</div>
+                            <div class="card-subvalue">Market Depth</div>
+                        </div>
+                        <div class="card-icon">
+                            <svg width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+                                <path d="M22 12h-4l-3 9L9 3l-3 9H2"/>
+                            </svg>
+                        </div>
+                    </div>
+                </div>
+                <div class="card">
+                    <div class="card-header">
+                        <div>
+                            <div class="card-title">TRACKED PROTOCOLS</div>
+                            <div class="card-value">10</div>
+                            <div class="card-subvalue">Polymarket Listed</div>
+                        </div>
+                        <div class="card-icon">
+                            <svg width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+                                <circle cx="8" cy="8" r="6"/>
+                                <path d="M15 13a6 6 0 0 1 0 12H8"/>
+                            </svg>
+                        </div>
+                    </div>
+                </div>
+            </div>
+
+            <!-- 主要圖表與數據區 -->
+            <div class="charts-grid">
+                
+            <!-- 左側：Polymarket FDV 預測視覺化 -->
+            <div class="chart-card">
+                <div class="chart-title">
+                    <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+                        <polyline points="23 6 13.5 15.5 8.5 10.5 1 18"/>
+                        <polyline points="17 6 23 6 23 12"/>
+                    </svg>
+                    Polymarket FDV 預測區間 (Billion $)
+                    <div class="update-badge">
+                        <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+                            <path d="M3 12a9 9 0 0 1 9-9 9.75 9.75 0 0 1 6.74 2.74L21 8"/>
+                            <path d="M21 3v5h-5"/>
+                            <path d="M21 12a9 9 0 0 1-9 9 9.75 9.75 0 0 1-6.74-2.74L3 16"/>
+                            <path d="M8 16H3v5"/>
+                        </svg>
+                        <span id="lastUpdate">Last: 2026-01-21</span>
+                    </div>
+                </div>
+                <div class="bar-chart" id="fdvChart">
+                    <!-- 圖表將由 JavaScript 生成 -->
+                </div>
+            </div>
+
+                <!-- 右側：Poly 關注度 (Volume/User) -->
+                <div class="chart-card">
+                <div class="chart-title">
+                    <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+                        <circle cx="8" cy="8" r="6"/>
+                        <path d="M15 13a6 6 0 0 1 0 12"/>
+                    </svg>
+                    Polymarket 熱度 (交易量)
+                </div>
+                    <div class="hotness-list" id="hotnessList">
+                        <!-- 熱度列表將由 JavaScript 生成 -->
+                    </div>
+                </div>
+            </div>
+
+            <!-- 詳細數據表格 -->
+            <div class="table-card">
+                <div class="table-header">
+                    <div class="table-title">詳細市場數據</div>
+                    
+                    <!-- 備註圖例 -->
+                    <div class="table-legend">
+                        <span class="font-bold text-gray-600 flex items-center gap-1">
+                            <svg width="12" height="12" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+                                <path d="M16 4h2a2 2 0 0 1 2 2v14a2 2 0 0 1-2 2H6a2 2 0 0 1-2-2V6a2 2 0 0 1 2-2h2"/>
+                                <rect x="8" y="2" width="8" height="4" rx="1" ry="1"/>
+                            </svg>
+                            Vol/OI Ratio:
+                        </span>
+                        <span class="legend-item">
+                            <div class="legend-dot" style={{background: '#10b981'}}></div> 健康 (低)
+                        </span>
+                        <span class="legend-item">
+                            <div class="legend-dot" style={{background: '#f59e0b'}}></div> 偏高
+                        </span>
+                        <span class="legend-item">
+                            <div class="legend-dot" style={{background: '#ef4444'}}></div> 過熱 (高)
+                        </span>
+                        <span style={{color: '#9ca3af', marginLeft: '0.5rem', borderLeft: '1px solid #d1d5db', paddingLeft: '0.5rem'}}>數字越小越健康</span>
+                    </div>
+                </div>
+                
+                <div class="table-wrapper">
+                    <table id="dataTable">
+                        <!-- 表格將由 JavaScript 生成 -->
+                    </table>
+                </div>
+                <div class="table-footer">
+                    Last updated: <span id="lastUpdated">下午8:07:47</span> • Vol/OI logic: Lower ratio indicates healthier organic growth vs speculative wash trading.
+                </div>
+            </div>
+
+        </main>
+
+        <!-- Footer Section -->
+        <footer>
+            <div class="footer-links">
+                <a href="https://x.com/Alvin0617" target="_blank" rel="noopener noreferrer" class="footer-link">
+                    made by @alvin0617
+                </a>
+                <span class="footer-separator">|</span>
+                <a href="https://t.me/variational_cn" target="_blank" rel="noopener noreferrer" class="footer-link">
+                    Join Variational CW
+                </a>
+            </div>
+            <a href="https://x.com/CryptoWesearch" target="_blank" rel="noopener noreferrer" class="footer-logo">
+                <img src="https://pbs.twimg.com/profile_images/1608304695776509954/gaWpTcjW_400x400.jpg" alt="Logo" />
+            </a>
+        </footer>
+    </div>
+
+    <!-- 機率懸停提示框 -->
+    <div class="tooltip" id="tooltip"></div>
+
+    <script>
+        // 最新 Polymarket FDV 預測數據
+        const POLYMARKET_DATA = {
+            'EdgeX': {
+                '1B': 67,
+                '2B': 32,
+                '3B': 13,
+                '4B': 7,
+                '5B': 5,
+                '10B': 2
+            },
+            'Backpack': {
+                '700M': 71,
+                '1B': 49,
+                '2B': 19,
+                '3B': 10,
+                '4B': 5,
+                '5B': 4
+            },
+            'StandX': {
+                '800M': 56
+            },
+            'Ostium': {
+                '300M': 56,
+                '500M': 42,
+                '700M': 21,
+                '1B': 14,
+                '2B': 8,
+                '3B': 5,
+                '4B': 4
+            },
+            'Variational': {
+                '500M': 30,
+                '800M': 20,
+                '1B': 15,
+                '2B': 8,
+                '3B': 4
+            },
+            'Paradex': {
+                '300M': 60,
+                '500M': 26,
+                '750M': 18,
+                '1.5B': 5,
+                '3B': 4,
+                '5B': 1,
+                '10B': 1
+            },
+            'Extended': {
+                '300M': 81,
+                '500M': 48,
+                '800M': 29,
+                '1B': 19,
+                '2B': 6,
+                '3B': 5
+            },
+            'Pacifica': {
+                '300M': 50,
+                '500M': 34,
+                '800M': 14,
+                '1B': 8,
+                '2B': 6,
+                '3B': 2
+            },
+            'GRVT': {
+                '200M': 25,
+                '500M': 15,
+                '800M': 8,
+                '1B': 6,
+                '2B': 3
+            },
+            'Reya': {
+                '150M': 51,
+                '200M': 39,
+                '300M': 26,
+                '400M': 9,
+                '1B': 3
+            }
+        };
+
+        // 數據 (用戶提供的真實數據)
+        const INITIAL_DATA = [
+            { id: 1, name: 'EdgeX', tier: 'T1', chain: 'Multi Chain', points_program: 'Active', volume_24h: 4800000000, oi: 1000000000, fdv_low: 1.0, fdv_high: 2.0, poly_vol: '$1.77M', note: '' },
+            { id: 2, name: 'StandX', tier: 'T1', chain: 'Multi Chain', points_program: 'Active', volume_24h: 190000000, oi: 30000000, fdv_low: 0.8, fdv_high: 1.0, poly_vol: '$632K', note: '' },
+            { id: 3, name: 'Backpack', tier: 'T1', chain: 'N/A', points_program: 'Season 4', volume_24h: 1000000000, oi: 500000000, fdv_low: 0.7, fdv_high: 1.0, poly_vol: '$810K', note: '' },
+            { id: 4, name: 'Ostium', tier: 'T2', chain: 'Multi Chain', points_program: 'Season 2', volume_24h: 316000000, oi: 22000000, fdv_low: 0.7, fdv_high: 1.0, poly_vol: '$30K', note: '應該會加開更低的 FDV' },
+            { id: 5, name: 'Variational', tier: 'T2', chain: 'Arbitrum', points_program: 'Season 1', volume_24h: 2000000000, oi: 1100000000, fdv_low: 0.5, fdv_high: 0.8, poly_vol: '$166K', note: '當前最早期' },
+            { id: 6, name: 'Paradex', tier: 'T2', chain: 'Multi Chain', points_program: 'Live', volume_24h: 1600000000, oi: 630000000, fdv_low: 0.3, fdv_high: 0.5, poly_vol: '$240K', note: '積分活動尾聲' },
+            { id: 7, name: 'Extended', tier: 'T3', chain: 'Multi Chain', points_program: 'Live', volume_24h: 1800000000, oi: 300000000, fdv_low: 0.3, fdv_high: 0.5, poly_vol: '$226K', note: '' },
+            { id: 8, name: 'Pacifica', tier: 'T3', chain: 'Solana', points_program: 'Live', volume_24h: 994000000, oi: 79000000, fdv_low: 0.3, fdv_high: 0.5, poly_vol: '$29K', note: '前 FTX COO 創立' },
+            { id: 9, name: 'GRVT', tier: 'T2', chain: 'Multi Chain', points_program: 'Live', volume_24h: 2000000000, oi: 510000000, fdv_low: 0.2, fdv_high: 0.3, poly_vol: 'No Data', note: '' },
+            { id: 10, name: 'Reya', tier: 'T3', chain: 'Reya Network', points_program: 'OG', volume_24h: 629000000, oi: 23000000, fdv_low: 0.15, fdv_high: 0.2, poly_vol: '$78K', note: '' }
+        ];
+
+        let data = [...INITIAL_DATA];
+        let sortConfig = { key: 'fdv_high', direction: 'desc' };
+
+        // 格式化貨幣
+        function formatCurrency(value) {
+            if (value >= 1000000000) {
+                return `$${(value / 1000000000).toFixed(2)}B`;
+            }
+            if (value >= 1000000) {
+                return `$${(value / 1000000).toFixed(1)}M`;
+            }
+            return `$${value.toLocaleString()}`;
+        }
+
+        // 計算 Vol/OI 狀態
+        function getVolOiStatus(vol, oi) {
+            if (!oi || oi === 0) return { ratio: 0, color: 'ratio-healthy', label: 'N/A' };
+            
+            const ratio = vol / oi;
+            let color = 'ratio-healthy';
+            let label = 'Healthy';
+
+            if (ratio > 20) {
+                color = 'ratio-overheated';
+                label = 'Overheated';
+            } else if (ratio > 10) {
+                color = 'ratio-elevated';
+                label = 'Elevated';
+            }
+
+            return { ratio: ratio.toFixed(1), color, label };
+        }
+
+        // 重新整理數據
+        function refreshData() {
+            data = data.map(item => ({
+                ...item,
+                volume_24h: item.volume_24h * (1 + (Math.random() * 0.1 - 0.05)),
+                oi: item.oi * (1 + (Math.random() * 0.05 - 0.025)),
+            }));
+            
+            document.getElementById('lastUpdated').textContent = new Date().toLocaleTimeString();
+            updateDisplay();
+        }
+
+        // 排序數據
+        function sortData(key) {
+            let direction = 'asc';
+            if (sortConfig.key === key && sortConfig.direction === 'asc') {
+                direction = 'desc';
+            }
+            sortConfig = { key, direction };
+            updateDisplay();
+        }
+
+        // 獲取排序後的數據
+        function getSortedData() {
+            let sortableItems = [...data];
+            
+            sortableItems.sort((a, b) => {
+                let aValue = a[sortConfig.key];
+                let bValue = b[sortConfig.key];
+
+                if (aValue < bValue) {
+                    return sortConfig.direction === 'asc' ? -1 : 1;
+                }
+                if (aValue > bValue) {
+                    return sortConfig.direction === 'asc' ? 1 : -1;
+                }
+                return 0;
+            });
+            return sortableItems;
+        }
+
+        // 更新顯示
+        function updateDisplay() {
+            const sortedData = getSortedData();
+            
+            // 更新總計
+            const totalVolume = data.reduce((acc, curr) => acc + curr.volume_24h, 0);
+            const totalOI = data.reduce((acc, curr) => acc + curr.oi, 0);
+            document.getElementById('totalVolume').textContent = formatCurrency(totalVolume);
+            document.getElementById('totalOI').textContent = formatCurrency(totalOI);
+
+            // 更新圖表
+            updateChart(sortedData);
+            
+            // 更新熱度列表
+            updateHotnessList();
+            
+            // 更新表格
+            updateTable(sortedData);
+        }
+
+        // 顯示機率提示框
+        function showTooltip(element, protocolName) {
+            const tooltip = document.getElementById('tooltip');
+            const polyData = POLYMARKET_DATA[protocolName];
+            
+            if (!polyData) return;
+            
+            let tooltipContent = `<div class="tooltip-title">${protocolName} FDV 預測機率</div>`;
+            
+            Object.entries(polyData).forEach(([fdv, probability]) => {
+                tooltipContent += `
+                    <div class="tooltip-item">
+                        <span class="tooltip-fdv">${fdv}</span>
+                        <span class="tooltip-prob">${probability}%</span>
+                    </div>
+                `;
+            });
+            
+            tooltip.innerHTML = tooltipContent;
+            
+            const rect = element.getBoundingClientRect();
+            tooltip.style.left = rect.left + rect.width / 2 - 100 + 'px';
+            tooltip.style.top = rect.top - 10 + 'px';
+            tooltip.classList.add('show');
+        }
+
+        // 隱藏機率提示框
+        function hideTooltip() {
+            const tooltip = document.getElementById('tooltip');
+            tooltip.classList.remove('show');
+        }
+
+        // 更新圖表
+        function updateChart(data) {
+            const chartContainer = document.getElementById('fdvChart');
+            const maxValue = Math.max(...data.map(d => d.fdv_high));
+            
+            chartContainer.innerHTML = data.slice(0, 8).map(item => `
+                <div class="bar" 
+                     style="height: ${(item.fdv_high / maxValue) * 100}%"
+                     onmouseenter="showTooltip(this, '${item.name}')"
+                     onmouseleave="hideTooltip()">
+                    <div class="bar-value">$${item.fdv_high}B</div>
+                    <div class="bar-label">${item.name}</div>
+                </div>
+            `).join('');
+        }
+
+        // 更新熱度列表
+        function updateHotnessList() {
+            const listContainer = document.getElementById('hotnessList');
+            const sortedData = [...data].sort((a, b) => {
+                const aVol = a.poly_vol.replace('$', '').replace('M', '').replace('K', '');
+                const bVol = b.poly_vol.replace('$', '').replace('M', '').replace('K', '');
+                return parseFloat(bVol) - parseFloat(aVol);
+            });
+
+            listContainer.innerHTML = sortedData.map((item, idx) => `
+                <div class="hotness-item">
+                    <div class="hotness-info">
+                        <span class="hotness-rank">#${idx + 1}</span>
+                        <div style="margin-left: 0.75rem">
+                            <div class="hotness-name">${item.name}</div>
+                            <div class="hotness-fdv">FDV High: $${item.fdv_high}B</div>
+                        </div>
+                    </div>
+                    <div class="hotness-volume">
+                        <div class="hotness-volume-value">${item.poly_vol}</div>
+                        <div class="hotness-volume-label">Polymarket Vol</div>
+                    </div>
+                </div>
+            `).join('');
+        }
+
+        // 更新表格
+        function updateTable(data) {
+            const tableContainer = document.getElementById('dataTable');
+            
+            tableContainer.innerHTML = `
+                <thead>
+                    <tr>
+                        <th onclick="sortData('name')">
+                            <div style="display: flex; align-items: center; gap: 4px;">
+                                Protocol
+                                <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+                                    <path d="m21 16-4 4-4-4"/>
+                                    <path d="M17 20V4"/>
+                                    <path d="m3 8 4-4 4 4"/>
+                                    <path d="M7 4v16"/>
+                                </svg>
+                            </div>
+                        </th>
+                        <th class="right" onclick="sortData('volume_24h')">
+                            <div style="display: flex; align-items: center; gap: 4px; justify-content: flex-end;">
+                                24h Vol
+                                <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+                                    <path d="m21 16-4 4-4-4"/>
+                                    <path d="M17 20V4"/>
+                                    <path d="m3 8 4-4 4 4"/>
+                                    <path d="M7 4v16"/>
+                                </svg>
+                            </div>
+                        </th>
+                        <th class="right" onclick="sortData('oi')">
+                            <div style="display: flex; align-items: center; gap: 4px; justify-content: flex-end;">
+                                Open Interest
+                                <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+                                    <path d="m21 16-4 4-4-4"/>
+                                    <path d="M17 20V4"/>
+                                    <path d="m3 8 4-4 4 4"/>
+                                    <path d="M7 4v16"/>
+                                </svg>
+                            </div>
+                        </th>
+                        <th class="center">Vol / OI Ratio</th>
+                        <th class="right">Poly. Vol</th>
+                        <th class="right" onclick="sortData('fdv_high')">
+                            <div style="display: flex; align-items: center; gap: 4px; justify-content: flex-end;">
+                                FDV High
+                                <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+                                    <path d="m21 16-4 4-4-4"/>
+                                    <path d="M17 20V4"/>
+                                    <path d="m3 8 4-4 4 4"/>
+                                    <path d="M7 4v16"/>
+                                </svg>
+                            </div>
+                        </th>
+                        <th style="background: var(--primary); color: white;">Notes</th>
+                    </tr>
+                </thead>
+                <tbody>
+                    ${data.map((row, index) => {
+                        const volOiStatus = getVolOiStatus(row.volume_24h, row.oi);
+                        
+                        return `
+                            <tr>
+                                <td>
+                                    <div class="protocol-cell">
+                                        <div class="protocol-indicator ${index < 3 ? 'top' : 'normal'}"></div>
+                                        <div class="protocol-info">
+                                            <div class="name">${row.name}</div>
+                                            <div class="chain">${row.chain}</div>
+                                        </div>
+                                    </div>
+                                </td>
+                                <td class="number-cell volume-cell">
+                                    ${formatCurrency(row.volume_24h)}
+                                </td>
+                                <td class="number-cell oi-cell">
+                                    ${formatCurrency(row.oi)}
+                                </td>
+                                <td class="center">
+                                    <div class="ratio-badge ${volOiStatus.color}">
+                                        ${volOiStatus.ratio}x
+                                    </div>
+                                </td>
+                                <td class="right">
+                                    <span class="poly-volume">${row.poly_vol}</span>
+                                </td>
+                                <td class="number-cell fdv-cell right">
+                                    $${row.fdv_high}B
+                                </td>
+                                <td>
+                                    ${row.note ? `
+                                        <div class="note-badge" title="${row.note}">
+                                            <svg width="12" height="12" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+                                                <circle cx="12" cy="12" r="10"/>
+                                                <line x1="12" y1="16" x2="12" y2="12"/>
+                                                <line x1="12" y1="8" x2="12.01" y2="8"/>
+                                            </svg>
+                                            ${row.note}
+                                        </div>
+                                    ` : ''}
+                                </td>
+                            </tr>
+                        `;
+                    }).join('')}
+                </tbody>
+            `;
+        }
+
+        // 搜尋功能
+        document.getElementById('searchInput').addEventListener('input', function(e) {
+            const searchTerm = e.target.value.toLowerCase();
+            if (searchTerm) {
+                data = INITIAL_DATA.filter(item => 
+                    item.name.toLowerCase().includes(searchTerm) ||
+                    item.chain.toLowerCase().includes(searchTerm)
+                );
+            } else {
+                data = [...INITIAL_DATA];
+            }
+            updateDisplay();
+        });
+
+        // 設置最後更新時間
+        function setLastUpdateTime() {
+            const now = new Date();
+            const dateStr = now.toISOString().split('T')[0]; // YYYY-MM-DD 格式
+            document.getElementById('lastUpdate').textContent = `Last: ${dateStr}`;
+        }
+
+        // 模擬每週更新（實際使用時可以替換為真實的更新邏輯）
+        function scheduleWeeklyUpdate() {
+            // 計算下週一的日期
+            const now = new Date();
+            const daysUntilMonday = (8 - now.getDay()) % 7 || 7;
+            const nextMonday = new Date(now.getTime() + daysUntilMonday * 24 * 60 * 60 * 1000);
+            
+            console.log(`下次更新時間: ${nextMonday.toLocaleDateString()}`);
+        }
+
+        // 添加手動更新 Polymarket 數據的函數
+        function updatePolymarketData() {
+            // 這裡可以添加獲取最新 Polymarket 數據的邏輯
+            // 現在先顯示更新時間
+            setLastUpdateTime();
+            scheduleWeeklyUpdate();
+        }
+
+        // 初始化顯示
+        updateDisplay();
+        setLastUpdateTime();
+        scheduleWeeklyUpdate();
+    </script>
+</body>
 </html>
