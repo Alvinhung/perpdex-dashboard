@@ -76,8 +76,8 @@ const INITIAL_DATA: DataItem[] = [
     tier: 'T1',
     chain: 'Multi Chain', 
     points_program: 'Active', 
-    volume_24h: 175000000, 
-    oi: 20000000, // Ratio: ~8.75 (Medium)
+    volume_24h: 632000000, 
+    oi: 30000000, // Ratio: ~21 (Moderate)
     fdv_low: 0.8, 
     fdv_high: 1.0, 
     poly_vol: '410K',

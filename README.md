@@ -22,7 +22,7 @@
 - **Backpack**: $1B volume, $500M OI
 
 ### 🟠 T2 項目 (穩定運營)
-- **StandX**: $632M volume, $30M OI
+- **StandX**: $632M volume, $30M OI - 成熟高流動性，Vol/OI 比例 21
 - **Paradex**: $1.6B volume, $630M OI
 
 ### 🟡 T3 項目 (早期/專業項目)
