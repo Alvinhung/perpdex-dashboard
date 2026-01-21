@@ -1,73 +1,96 @@
-# React + TypeScript + Vite
+# Perp DEX Dashboard - 市場估值與發幣預期監控
 
-This template provides a minimal setup to get React working in Vite with HMR and some ESLint rules.
+這個 Dashboard 提供了完整的永續合約交易所 (Perp DEX) 的最新市場數據監控平台。
 
-Currently, two official plugins are available:
+## 🚀 主要功能
 
-- [@vitejs/plugin-react](https://github.com/vitejs/vite-plugin-react/blob/main/packages/plugin-react) uses [Babel](https://babeljs.io/) (or [oxc](https://oxc.rs) when used in [rolldown-vite](https://vite.dev/guide/rolldown)) for Fast Refresh
-- [@vitejs/plugin-react-swc](https://github.com/vitejs/vite-plugin-react/blob/main/packages/plugin-react-swc) uses [SWC](https://swc.rs/) for Fast Refresh
+- 📊 **實時數據監控**
+  - 來源：DefiLlama API (24h 交易量、Open Interest)
+  - 更新：每 24 小時自動從 API 獲取最新數據
+  - 支持：EdgeX、Backpack、StandX、Variational、Paradex 等 10+ 項目
 
-## React Compiler
+- 📈 **Polymarket 預測市場**
+  - FDV 預測機率：滑鼠懸停顯示各項目的不同 FDV 區間的市場機率
+  - 數據來源：直接爬取 Polymarket 市場頁面
+  - 支持：EdgeX、Backpack、StandX、等熱門項目
 
-The React Compiler is not enabled on this template because of its impact on dev & build performances. To add it, see [this documentation](https://react.dev/learn/react-compiler/installation).
+- 🎨 **健康度分析**
+  - Vol/OI 比例：計算並顯示協議健康狀態
+  - 顏色編碼：
+    - 🟢 健康：Vol/OI < 5 (有機成長)
+    - 🟡 正常：Vol/OI 5-10 (正常範圍)
+    - 🟠 投機：Vol/OI > 10 (可能刷量)
 
-## Expanding the ESLint configuration
+## 🌐 技術特點
 
-If you are developing a production application, we recommend updating the configuration to enable type-aware lint rules:
+- **前端框架**: React 19 + TypeScript + Vite
+- **樣式框架**: Tailwind CSS (完整配置)
+- **圖表庫**: Recharts (交互式圖表)
+- **圖標庫**: Lucide React (現代化圖標)
+- **部署方案**: GitHub Actions 自動部署
+- **響應式設計**: 完全適用手機和桌面
 
-```js
-export default defineConfig([
-  globalIgnores(['dist']),
-  {
-    files: ['**/*.{ts,tsx}'],
-    extends: [
-      // Other configs...
+## 📊 監控的項目
 
-      // Remove tseslint.configs.recommended and replace with this
-      tseslint.configs.recommendedTypeChecked,
-      // Alternatively, use this for stricter rules
-      tseslint.configs.strictTypeChecked,
-      // Optionally, add this for stylistic rules
-      tseslint.configs.stylisticTypeChecked,
+### 🔥 T1 項目 (預期發幣潛力高)
+- **EdgeX**: 24h Volume $4.09B, OI $1.2B
+- **Backpack**: 24h Volume $1B, OI $500M
 
-      // Other configs...
-    ],
-    languageOptions: {
-      parserOptions: {
-        project: ['./tsconfig.node.json', './tsconfig.app.json'],
-        tsconfigRootDir: import.meta.dirname,
-      },
-      // other options...
-    },
-  },
-])
+### 🟢 T2 項目 (專業級別)
+- **Variational**: 24h Volume $2B, OI $1.14B
+- **StandX**: 24h Volume $190M, OI $30M
+
+### 🌟 T3 項目 (早期/專業項目)
+- **Paradex**: 24h Volume $800M, OI $395M
+- **Extended**: 24h Volume $1.8B, OI $278M
+
+## 🚀 部署資訊
+
+### 🌐 GitHub Pages 自動部署
+- **倉庫地址**: https://github.com/Alvin0617/perpdex-dashboard
+- **部署狀態**: https://alvin0617.github.io/perpdex-dashboard
+- **自動更新**: 每 24 小時從 DefiLlama API 獲取最新數據
+- **版本控制**: Git 歷史追蹤，自動化部署流程
+
+## 🎯 使用指南
+
+### 本地開發
+```bash
+cd perpdex-dashboard
+pnpm dev
 ```
 
-You can also install [eslint-plugin-react-x](https://github.com/Rel1cx/eslint-react/tree/main/packages/plugins/eslint-plugin-react-x) and [eslint-plugin-react-dom](https://github.com/Rel1cx/eslint-react/tree/main/packages/plugins/eslint-plugin-react-dom) for React-specific lint rules:
-
-```js
-// eslint.config.js
-import reactX from 'eslint-plugin-react-x'
-import reactDom from 'eslint-plugin-react-dom'
-
-export default defineConfig([
-  globalIgnores(['dist']),
-  {
-    files: ['**/*.{ts,tsx}'],
-    extends: [
-      // Other configs...
-      // Enable lint rules for React
-      reactX.configs['recommended-typescript'],
-      // Enable lint rules for React DOM
-      reactDom.configs.recommended,
-    ],
-    languageOptions: {
-      parserOptions: {
-        project: ['./tsconfig.node.json', './tsconfig.app.json'],
-        tsconfigRootDir: import.meta.dirname,
-      },
-      // other options...
-    },
-  },
-])
+### 查看自動部署
+```bash
+gh workflow list
 ```
+
+### 手動數據更新
+```bash
+git add .
+git commit -m "Update specific data"
+git push
+```
+
+## 🔧 GitHub Actions 配置
+- 自動化工作流程已設置
+- 每 24 小時檢查 API 更新
+- 自動部署到 GitHub Pages
+
+---
+
+## 📈 技術功能演示
+- ✅ 實時數據同步
+- 🎨 交互式圖表體驗
+- 🎯 專業級格式化代碼
+- 📱 完整的響應式設計
+
+## 🌟 商業級功能
+- 🏢 市場熱度排名
+- 💰 Vol/OI 健康度分析
+- 📊 FDV 預測機率懸停
+- 🔄 數據更新觸發
+
+---
+
+這個 Dashboard 展示了完整的 Perp DEX 市場生態，幫助投資者和交易者做出更明智的決策！
