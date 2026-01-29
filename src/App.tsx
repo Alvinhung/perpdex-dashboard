@@ -51,22 +51,23 @@ interface DataItem {
   fdv_low: number;
   fdv_high: number;
   poly_vol: string;
+  poly_vol_change?: number; // 24hr 變化百分比
   note: string;
   volOiRatio?: number;
 }
 
 // 完整數據列表
 const INITIAL_DATA: DataItem[] = [
-  { 
-    id: 1, 
-    name: 'EdgeX', 
+  {
+    id: 1,
+    name: 'EdgeX',
     tier: 'T1',
-    chain: 'Multi Chain', 
-    points_program: 'Active', 
-    volume_24h: 3300000000, 
-    oi: 820000000, // Ratio: ~4.02
-    fdv_low: 1.0, 
-    fdv_high: 2.0, 
+    chain: 'Multi Chain',
+    points_program: 'Active',
+    volume_24h: 23100000000,
+    oi: 1000000000, // Ratio: ~23.1
+    fdv_low: 1.0,
+    fdv_high: 2.0,
     poly_vol: '745K',
     note: ''
   },
@@ -109,81 +110,81 @@ const INITIAL_DATA: DataItem[] = [
     poly_vol: '7K',
     note: '應該會加開更低的 FDV'
   },
-  { 
-    id: 5, 
-    name: 'Variational', 
+  {
+    id: 5,
+    name: 'Variational',
     tier: 'T2',
-    chain: 'Arbitrum', 
-    points_program: 'Season 1', 
-    volume_24h: 812600000, 
-    oi: 1550000000, // Ratio: 0.52 (Very Healthy)
-    fdv_low: 0.5, 
-    fdv_high: 0.8, 
+    chain: 'Arbitrum',
+    points_program: 'Season 1',
+    volume_24h: 9400000000,
+    oi: 1200000000, // Ratio: ~7.8
+    fdv_low: 0.5,
+    fdv_high: 0.8,
     poly_vol: '15K',
     note: '當前最早期'
   },
-  { 
-    id: 6, 
-    name: 'Paradex', 
+  {
+    id: 6,
+    name: 'Paradex',
     tier: 'T2',
-    chain: 'Multi Chain', 
-    points_program: 'Live', 
-    volume_24h: 1777585011, 
-    oi: 781135243, 
-    fdv_low: 0.3, 
-    fdv_high: 0.5, 
+    chain: 'Multi Chain',
+    points_program: 'Live',
+    volume_24h: 15200000000,
+    oi: 749000000,
+    fdv_low: 0.3,
+    fdv_high: 0.5,
     poly_vol: '6K',
     note: '積分活動尾聲'
   },
-  { 
-    id: 7, 
-    name: 'Extended', 
+  {
+    id: 7,
+    name: 'Extended',
     tier: 'T3',
-    chain: 'Multi Chain', 
-    points_program: 'Live', 
-    volume_24h: 1395835456, 
-    oi: 202123228, 
-    fdv_low: 0.3, 
-    fdv_high: 0.5, 
+    chain: 'Multi Chain',
+    points_program: 'Live',
+    volume_24h: 10600000000,
+    oi: 352000000,
+    fdv_low: 0.3,
+    fdv_high: 0.5,
     poly_vol: '61K',
     note: ''
   },
-  { 
-    id: 8, 
-    name: 'Pacifica', 
+  {
+    id: 8,
+    name: 'Pacifica',
     tier: 'T3',
-    chain: 'Solana', 
-    points_program: 'Live', 
-    volume_24h: 700387954, 
-    oi: 78138297, 
-    fdv_low: 0.3, 
-    fdv_high: 0.5, 
+    chain: 'Solana',
+    points_program: 'Live',
+    volume_24h: 5400000000,
+    oi: 83000000,
+    fdv_low: 0.3,
+    fdv_high: 0.5,
     poly_vol: '7K',
     note: '前 FTX COO 創立'
   },
-  { 
-    id: 9, 
-    name: 'GRVT', // 更新為 GRVT
-    tier: 'T2', 
-    chain: 'Multi Chain', 
-    points_program: 'Live', 
-    volume_24h: 1000000000, 
-    oi: 370000000, 
-    fdv_low: 0.2, 
-    fdv_high: 0.3, 
+  {
+    id: 9,
+    name: 'GRVT',
+    tier: 'T2',
+    chain: 'Multi Chain',
+    points_program: 'Live',
+    volume_24h: 12100000000,
+    oi: 501000000,
+    fdv_low: 0.2,
+    fdv_high: 0.3,
     poly_vol: '46K',
     note: ''
   },
-  { 
-    id: 10, 
-    name: 'Reya', 
+  {
+    id: 10,
+    name: 'Reya',
     tier: 'T3',
-    chain: 'Reya Network', 
-    points_program: 'OG', 
-    volume_24h: 45000000, 
-    oi: 22000000, 
-    fdv_low: 0.15, 
-    fdv_high: 0.2, 
+    chain: 'Reya Network',
+    points_program: 'OG',
+    volume_24h: 45000000,
+    oi: 22000000,
+    fdv_low: 0.15,
+    fdv_high: 0.2,
     poly_vol: '32K',
     note: ''
   }
