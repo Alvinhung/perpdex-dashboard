@@ -81,7 +81,7 @@ const INITIAL_DATA: DataItem[] = [
     oi: 30000000, // Ratio: ~21 (Moderate)
     fdv_low: 0.8, 
     fdv_high: 1.0, 
-    poly_vol: '410K',
+    poly_vol: '694K',
     note: ''
   },
   {
@@ -107,7 +107,7 @@ const INITIAL_DATA: DataItem[] = [
     oi: 40452297, 
     fdv_low: 0.7, 
     fdv_high: 1.0, 
-    poly_vol: '7K',
+    poly_vol: '31K',
     note: '應該會加開更低的 FDV'
   },
   {
@@ -159,7 +159,7 @@ const INITIAL_DATA: DataItem[] = [
     oi: 83000000,
     fdv_low: 0.3,
     fdv_high: 0.5,
-    poly_vol: '7K',
+    poly_vol: '33K',
     note: '前 FTX COO 創立'
   },
   {
@@ -172,7 +172,7 @@ const INITIAL_DATA: DataItem[] = [
     oi: 501000000,
     fdv_low: 0.2,
     fdv_high: 0.3,
-    poly_vol: '46K',
+    poly_vol: '80K',
     note: ''
   },
   {
@@ -185,7 +185,7 @@ const INITIAL_DATA: DataItem[] = [
     oi: 22000000,
     fdv_low: 0.15,
     fdv_high: 0.2,
-    poly_vol: '32K',
+    poly_vol: '80K',
     note: ''
   }
 ];
