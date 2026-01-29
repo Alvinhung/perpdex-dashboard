@@ -68,11 +68,11 @@ const INITIAL_DATA: DataItem[] = [
     oi: 1000000000, // Ratio: ~23.1
     fdv_low: 1.0,
     fdv_high: 2.0,
-    poly_vol: '745K',
+    poly_vol: '2M',
     note: ''
   },
-  { 
-    id: 2, 
+  {
+    id: 2,
     name: 'StandX', 
     tier: 'T1',
     chain: 'Multi Chain', 
@@ -84,17 +84,17 @@ const INITIAL_DATA: DataItem[] = [
     poly_vol: '410K',
     note: ''
   },
-  { 
-    id: 3, 
-    name: 'Backpack', 
+  {
+    id: 3,
+    name: 'Backpack',
     tier: 'T1',
-    chain: 'N/A', 
-    points_program: 'Season 4', 
-    volume_24h: 1265201632, 
-    oi: 255202649, // Ratio: 19 (High/Speculative)
-    fdv_low: 0.7, 
-    fdv_high: 1.0, 
-    poly_vol: '290K',
+    chain: 'N/A',
+    points_program: 'Season 4',
+    volume_24h: 1265201632,
+    oi: 255202649,
+    fdv_low: 0.7,
+    fdv_high: 1.0,
+    poly_vol: '1M',
     note: ''
   },
   { 
@@ -120,7 +120,7 @@ const INITIAL_DATA: DataItem[] = [
     oi: 1200000000, // Ratio: ~7.8
     fdv_low: 0.5,
     fdv_high: 0.8,
-    poly_vol: '15K',
+    poly_vol: '91K',
     note: '當前最早期'
   },
   {
@@ -133,7 +133,7 @@ const INITIAL_DATA: DataItem[] = [
     oi: 749000000,
     fdv_low: 0.3,
     fdv_high: 0.5,
-    poly_vol: '6K',
+    poly_vol: '327K',
     note: '積分活動尾聲'
   },
   {
@@ -146,7 +146,7 @@ const INITIAL_DATA: DataItem[] = [
     oi: 352000000,
     fdv_low: 0.3,
     fdv_high: 0.5,
-    poly_vol: '61K',
+    poly_vol: '355K',
     note: ''
   },
   {
