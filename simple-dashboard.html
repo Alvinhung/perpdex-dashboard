@@ -1019,18 +1019,18 @@
             }
         };
 
-        // 數據 (用戶提供的真實數據)
+        // 數據 (用戶提供的真實數據) - Updated 2026-01-30
         const INITIAL_DATA = [
-            { id: 1, name: 'EdgeX', tier: 'T1', chain: 'Multi Chain', points_program: 'Active', volume_24h: 4800000000, oi: 1000000000, fdv_low: 1.0, fdv_high: 2.0, poly_vol: '$1.77M', note: '' },
-            { id: 2, name: 'StandX', tier: 'T1', chain: 'Multi Chain', points_program: 'Active', volume_24h: 190000000, oi: 30000000, fdv_low: 0.8, fdv_high: 1.0, poly_vol: '$632K', note: '' },
-            { id: 3, name: 'Backpack', tier: 'T1', chain: 'N/A', points_program: 'Season 4', volume_24h: 1000000000, oi: 500000000, fdv_low: 0.7, fdv_high: 1.0, poly_vol: '$810K', note: '' },
-            { id: 4, name: 'Ostium', tier: 'T2', chain: 'Multi Chain', points_program: 'Season 2', volume_24h: 316000000, oi: 22000000, fdv_low: 0.7, fdv_high: 1.0, poly_vol: '$30K', note: '應該會加開更低的 FDV' },
-            { id: 5, name: 'Variational', tier: 'T2', chain: 'Arbitrum', points_program: 'Season 1', volume_24h: 2000000000, oi: 1100000000, fdv_low: 0.5, fdv_high: 0.8, poly_vol: '$166K', note: '當前最早期' },
-            { id: 6, name: 'Paradex', tier: 'T2', chain: 'Multi Chain', points_program: 'Live', volume_24h: 1600000000, oi: 630000000, fdv_low: 0.3, fdv_high: 0.5, poly_vol: '$240K', note: '積分活動尾聲' },
-            { id: 7, name: 'Extended', tier: 'T3', chain: 'Multi Chain', points_program: 'Live', volume_24h: 1800000000, oi: 300000000, fdv_low: 0.3, fdv_high: 0.5, poly_vol: '$226K', note: '' },
-            { id: 8, name: 'Pacifica', tier: 'T3', chain: 'Solana', points_program: 'Live', volume_24h: 994000000, oi: 79000000, fdv_low: 0.3, fdv_high: 0.5, poly_vol: '$29K', note: '前 FTX COO 創立' },
-            { id: 9, name: 'GRVT', tier: 'T2', chain: 'Multi Chain', points_program: 'Live', volume_24h: 2000000000, oi: 510000000, fdv_low: 0.2, fdv_high: 0.3, poly_vol: 'No Data', note: '' },
-            { id: 10, name: 'Reya', tier: 'T3', chain: 'Reya Network', points_program: 'OG', volume_24h: 629000000, oi: 23000000, fdv_low: 0.15, fdv_high: 0.2, poly_vol: '$78K', note: '' }
+            { id: 1, name: 'EdgeX', tier: 'T1', chain: 'Multi Chain', points_program: 'Active', volume_24h: 23100000000, oi: 1000000000, fdv_low: 1.0, fdv_high: 2.0, poly_vol: '$2M', note: '' },
+            { id: 2, name: 'StandX', tier: 'T1', chain: 'Multi Chain', points_program: 'Active', volume_24h: 632000000, oi: 30000000, fdv_low: 0.8, fdv_high: 1.0, poly_vol: '$694K', note: '' },
+            { id: 3, name: 'Backpack', tier: 'T1', chain: 'N/A', points_program: 'Season 4', volume_24h: 1265201632, oi: 255202649, fdv_low: 0.7, fdv_high: 1.0, poly_vol: '$1M', note: '' },
+            { id: 4, name: 'Ostium', tier: 'T2', chain: 'Multi Chain', points_program: 'Season 2', volume_24h: 178955155, oi: 40452297, fdv_low: 0.7, fdv_high: 1.0, poly_vol: '$31K', note: '應該會加開更低的 FDV' },
+            { id: 5, name: 'Variational', tier: 'T2', chain: 'Arbitrum', points_program: 'Season 1', volume_24h: 9400000000, oi: 1200000000, fdv_low: 0.5, fdv_high: 0.8, poly_vol: '$91K', note: '當前最早期' },
+            { id: 6, name: 'Paradex', tier: 'T2', chain: 'Multi Chain', points_program: 'Live', volume_24h: 15200000000, oi: 749000000, fdv_low: 0.3, fdv_high: 0.5, poly_vol: '$327K', note: '積分活動尾聲' },
+            { id: 7, name: 'Extended', tier: 'T3', chain: 'Multi Chain', points_program: 'Live', volume_24h: 10600000000, oi: 352000000, fdv_low: 0.3, fdv_high: 0.5, poly_vol: '$355K', note: '' },
+            { id: 8, name: 'Pacifica', tier: 'T3', chain: 'Solana', points_program: 'Live', volume_24h: 5400000000, oi: 83000000, fdv_low: 0.3, fdv_high: 0.5, poly_vol: '$33K', note: '前 FTX COO 創立' },
+            { id: 9, name: 'GRVT', tier: 'T2', chain: 'Multi Chain', points_program: 'Live', volume_24h: 12100000000, oi: 501000000, fdv_low: 0.2, fdv_high: 0.3, poly_vol: '$80K', note: '' },
+            { id: 10, name: 'Reya', tier: 'T3', chain: 'Reya Network', points_program: 'OG', volume_24h: 45000000, oi: 22000000, fdv_low: 0.15, fdv_high: 0.2, poly_vol: '$80K', note: '' }
         ];
 
         let data = [...INITIAL_DATA];
