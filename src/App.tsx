@@ -56,7 +56,7 @@ interface DataItem {
   volOiRatio?: number;
 }
 
-// 完整數據列表
+// 完整數據列表 (Updated: 2026-03-20)
 const INITIAL_DATA: DataItem[] = [
   {
     id: 1,
@@ -66,23 +66,23 @@ const INITIAL_DATA: DataItem[] = [
     points_program: 'Active',
     volume_24h: 23100000000,
     oi: 1000000000, // Ratio: ~23.1
-    fdv_low: 1.0,
-    fdv_high: 2.0,
-    poly_vol: '2M',
-    note: ''
+    fdv_low: 0.5,
+    fdv_high: 1.0,
+    poly_vol: '5.68M',
+    note: 'Poly: $500M 61%'
   },
   {
     id: 2,
-    name: 'StandX', 
+    name: 'StandX',
     tier: 'T1',
-    chain: 'Multi Chain', 
-    points_program: 'Active', 
-    volume_24h: 632000000, 
+    chain: 'Multi Chain',
+    points_program: 'Active',
+    volume_24h: 632000000,
     oi: 30000000, // Ratio: ~21 (Moderate)
-    fdv_low: 0.8, 
-    fdv_high: 1.0, 
-    poly_vol: '694K',
-    note: ''
+    fdv_low: 0.2,
+    fdv_high: 0.4,
+    poly_vol: '938K',
+    note: 'Poly: $200M 29%'
   },
   {
     id: 3,
@@ -92,23 +92,23 @@ const INITIAL_DATA: DataItem[] = [
     points_program: 'Season 4',
     volume_24h: 1265201632,
     oi: 255202649,
-    fdv_low: 0.7,
-    fdv_high: 1.0,
-    poly_vol: '1M',
-    note: ''
+    fdv_low: 0.3,
+    fdv_high: 0.7,
+    poly_vol: '6.41M',
+    note: 'Poly: $300M 59%'
   },
-  { 
-    id: 4, 
-    name: 'Ostium', 
+  {
+    id: 4,
+    name: 'Ostium',
     tier: 'T2',
-    chain: 'Multi Chain', 
-    points_program: 'Season 2', 
-    volume_24h: 178955155, 
-    oi: 40452297, 
-    fdv_low: 0.7, 
-    fdv_high: 1.0, 
+    chain: 'Multi Chain',
+    points_program: 'Season 2',
+    volume_24h: 178955155,
+    oi: 40452297,
+    fdv_low: 0.3,
+    fdv_high: 0.5,
     poly_vol: '31K',
-    note: '應該會加開更低的 FDV'
+    note: 'Poly: $300M 23%'
   },
   {
     id: 5,
@@ -118,10 +118,10 @@ const INITIAL_DATA: DataItem[] = [
     points_program: 'Season 1',
     volume_24h: 9400000000,
     oi: 1200000000, // Ratio: ~7.8
-    fdv_low: 0.5,
-    fdv_high: 0.8,
-    poly_vol: '91K',
-    note: '當前最早期'
+    fdv_low: 0.3,
+    fdv_high: 0.5,
+    poly_vol: '714K',
+    note: 'Poly: $300M 40%'
   },
   {
     id: 6,
@@ -144,10 +144,10 @@ const INITIAL_DATA: DataItem[] = [
     points_program: 'Live',
     volume_24h: 10600000000,
     oi: 352000000,
-    fdv_low: 0.3,
-    fdv_high: 0.5,
-    poly_vol: '355K',
-    note: ''
+    fdv_low: 0.15,
+    fdv_high: 0.3,
+    poly_vol: '1.43M',
+    note: 'Poly: $150M 65%'
   },
   {
     id: 8,
@@ -159,8 +159,8 @@ const INITIAL_DATA: DataItem[] = [
     oi: 83000000,
     fdv_low: 0.3,
     fdv_high: 0.5,
-    poly_vol: '33K',
-    note: '前 FTX COO 創立'
+    poly_vol: '56K',
+    note: 'Poly: $300M 20%'
   },
   {
     id: 9,
@@ -170,10 +170,10 @@ const INITIAL_DATA: DataItem[] = [
     points_program: 'Live',
     volume_24h: 12100000000,
     oi: 501000000,
-    fdv_low: 0.2,
-    fdv_high: 0.3,
-    poly_vol: '80K',
-    note: ''
+    fdv_low: 0.05,
+    fdv_high: 0.1,
+    poly_vol: '115K',
+    note: 'Poly: $50M 91%'
   },
   {
     id: 10,
@@ -185,8 +185,8 @@ const INITIAL_DATA: DataItem[] = [
     oi: 22000000,
     fdv_low: 0.15,
     fdv_high: 0.2,
-    poly_vol: '80K',
-    note: ''
+    poly_vol: '19K',
+    note: 'Poly: $150M 18%'
   }
 ];
 
