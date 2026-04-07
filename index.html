@@ -941,94 +941,71 @@
     <div class="tooltip" id="tooltip"></div>
 
     <script>
-        // 最新 Polymarket FDV 預測數據 - Updated 2026-03-12
+        // 最新 Polymarket FDV 預測數據 - Updated 2026-04-06
         const POLYMARKET_DATA = {
             'EdgeX': {
-                '700M': 64,
-                '1B': 47,
-                '2B': 9,
-                '3B': 4,
-                '5B': 2,
-                '10B': 0
-            },
-            'Backpack': {
-                '100M': 97,
-                '200M': 88,
-                '300M': 62,
-                '500M': 30,
-                '700M': 13,
-                '1B': 6
-            },
-            'StandX': {
-                '200M': 40,
-                '400M': 25,
-                '800M': 16,
-                '1B': 10,
-                '2B': 4,
-                '3B': 3
-            },
-            'Ostium': {
-                '300M': 28,
-                '500M': 19,
-                '700M': 8,
-                '1B': 5,
-                '2B': 3,
-                '3B': 3
+                '500M': 100,
+                '600M': 100,
+                '700M': 0,
+                '1B': 0
             },
             'Variational': {
-                '300M': 47,
-                '500M': 25,
-                '800M': 12,
-                '1B': 10,
-                '2B': 7,
-                '3B': 2
+                '100M': 88,
+                '200M': 51,
+                '300M': 35,
+                '500M': 17,
+                '800M': 9,
+                '1B': 7
             },
             'Extended': {
-                '150M': 71,
-                '300M': 29,
-                '500M': 23,
-                '800M': 8,
-                '1B': 6,
-                '2B': 2
-            },
-            'Pacifica': {
-                '300M': 16,
-                '500M': 9,
+                '150M': 61,
+                '300M': 31,
+                '500M': 15,
                 '800M': 6,
-                '1B': 4,
+                '1B': 5
+            },
+            'Paradex': {
+                '40M': 100,
+                '80M': 0,
+                '100M': 0
+            },
+            'Ostium': {
+                '300M': 24,
+                '500M': 15,
+                '700M': 9,
+                '1B': 10,
                 '2B': 4,
                 '3B': 3
             },
             'GRVT': {
-                '50M': 92,
-                '100M': 66,
-                '200M': 37,
-                '300M': 21,
-                '500M': 19,
-                '1B': 6
+                '50M': 91,
+                '100M': 71,
+                '200M': 31,
+                '300M': 17,
+                '500M': 5,
+                '1B': 3
             },
             'Reya': {
-                '150M': 18,
-                '200M': 12,
+                '70M': 54,
+                '150M': 16,
+                '200M': 11,
                 '300M': 7,
-                '400M': 1,
+                '400M': 6,
                 '1B': 0
             }
         };
 
-        // 數據 - Updated 2026-03-12 (Polymarket FDV 最高機率)
-        // FDV = 最高機率的 Polymarket 預測值
-        // poly_vol = 所有 FDV 市場交易量加總
+        // 數據 (DeFiLlama + Polymarket) - Updated 2026-04-06
+        // 順序: EdgeX, Variational, Extended, Paradex, Ostium, Pacifica, GRVT, Reya
         const INITIAL_DATA = [
-            { id: 1, name: 'EdgeX', tier: 'T1', chain: 'Multi Chain', points_program: 'Active', volume_24h: 23100000000, oi: 1000000000, fdv_low: 0.5, fdv_high: 0.7, poly_vol: '$4.48M', note: '64% 機率 ≥$700M' },
-            { id: 2, name: 'Backpack', tier: 'T1', chain: 'N/A', points_program: 'Season 4', volume_24h: 1265201632, oi: 255202649, fdv_low: 0.2, fdv_high: 0.3, poly_vol: '$3.64M', note: '62% 機率 ≥$300M' },
-            { id: 3, name: 'Variational', tier: 'T2', chain: 'Arbitrum', points_program: 'Season 1', volume_24h: 9400000000, oi: 1200000000, fdv_low: 0.2, fdv_high: 0.3, poly_vol: '$403K', note: '47% 機率 ≥$300M' },
-            { id: 4, name: 'Ostium', tier: 'T2', chain: 'Arbitrum', points_program: 'Season 2', volume_24h: 178955155, oi: 40452297, fdv_low: 0.2, fdv_high: 0.3, poly_vol: '$5K', note: '28% 機率 ≥$300M' },
-            { id: 5, name: 'StandX', tier: 'T1', chain: 'Solana/BSC', points_program: 'Active', volume_24h: 632000000, oi: 30000000, fdv_low: 0.15, fdv_high: 0.2, poly_vol: '$891K', note: '40% 機率 ≥$200M' },
-            { id: 6, name: 'Extended', tier: 'T3', chain: 'Starknet', points_program: 'Season 1', volume_24h: 1600000000, oi: 280000000, fdv_low: 0.1, fdv_high: 0.15, poly_vol: '$1.09M', note: '71% 機率 ≥$150M' },
-            { id: 7, name: 'Pacifica', tier: 'T3', chain: 'Solana', points_program: 'Season 1', volume_24h: 5400000000, oi: 83000000, fdv_low: 0.2, fdv_high: 0.3, poly_vol: '$34K', note: '16% 機率 ≥$300M' },
-            { id: 8, name: 'GRVT', tier: 'T2', chain: 'zkSync', points_program: 'Live', volume_24h: 1001000000, oi: 397000000, fdv_low: 0.03, fdv_high: 0.05, poly_vol: '$105K', note: '92% 機率 ≥$50M' },
-            { id: 9, name: 'Reya', tier: 'T3', chain: 'Reya Network', points_program: 'Listed', volume_24h: 45000000, oi: 22000000, fdv_low: 0.1, fdv_high: 0.15, poly_vol: '$70K', note: '18% 機率 ≥$150M' }
+            { id: 1, name: 'EdgeX', tier: 'T1', chain: 'Multi Chain', points_program: 'TGE', volume_24h: 4582000000, oi: 1319000000, fdv_low: 0.88, fdv_high: 0.88, poly_vol: '$15.2M', note: '已發幣' },
+            { id: 2, name: 'Variational', tier: 'T2', chain: 'Arbitrum', points_program: 'Season 1', volume_24h: 1322000000, oi: 589570000, fdv_low: 0.1, fdv_high: 0.3, poly_vol: '$893K', note: '' },
+            { id: 3, name: 'Extended', tier: 'T3', chain: 'Starknet', points_program: 'Live', volume_24h: 471980000, oi: 327240000, fdv_low: 0.15, fdv_high: 0.3, poly_vol: '$1.76M', note: '' },
+            { id: 4, name: 'Paradex', tier: 'T2', chain: 'Starknet', points_program: 'TGE', volume_24h: 1263000000, oi: 553000000, fdv_low: 0.027, fdv_high: 0.027, poly_vol: '$200K', note: '已發幣' },
+            { id: 5, name: 'Ostium', tier: 'T2', chain: 'Arbitrum', points_program: 'Season 2', volume_24h: 303640000, oi: 185680000, fdv_low: 0.3, fdv_high: 0.5, poly_vol: '$63K', note: 'RWA perps' },
+            { id: 6, name: 'Pacifica', tier: 'T3', chain: 'Solana', points_program: 'Live', volume_24h: 434930000, oi: 74900000, fdv_low: 0.3, fdv_high: 0.5, poly_vol: '-', note: '前 FTX COO 創立' },
+            { id: 7, name: 'GRVT', tier: 'T2', chain: 'zkSync', points_program: 'Live', volume_24h: 1467000000, oi: 529160000, fdv_low: 0.05, fdv_high: 0.1, poly_vol: '$227K', note: '' },
+            { id: 8, name: 'Reya', tier: 'T3', chain: 'Reya Network', points_program: 'OG', volume_24h: 142200000, oi: 7500000, fdv_low: 0.07, fdv_high: 0.15, poly_vol: '$356K', note: '' }
         ];
 
         let data = [...INITIAL_DATA];
