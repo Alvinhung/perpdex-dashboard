@@ -998,17 +998,15 @@
         };
 
         // 數據 (DeFiLlama + Polymarket) - Updated 2026-04-17
+        // 已結算: EdgeX ($500M~$700M, 2026-04), Backpack ($200M~$300M, 2026-04), Paradex ($40M~$80M, 2026-04)
         const INITIAL_DATA = [
-            { id: 1, name: 'EdgeX', tier: 'T1', chain: 'Multi Chain', points_program: 'TGE', volume_24h: 4582000000, oi: 1319000000, fdv_low: 0.5, fdv_high: 0.7, poly_vol: '$15.2M', note: '✅ 已結算 $500M~$700M' },
-            { id: 2, name: 'Variational', tier: 'T2', chain: 'Arbitrum', points_program: 'Season 1', volume_24h: 1322000000, oi: 589570000, fdv_low: 0.1, fdv_high: 0.1, poly_vol: '$976K', note: '92% 機率 ≥$100M' },
-            { id: 3, name: 'Extended', tier: 'T3', chain: 'Starknet', points_program: 'Live', volume_24h: 471980000, oi: 327240000, fdv_low: 0.15, fdv_high: 0.15, poly_vol: '$1.98M', note: '63% 機率 ≥$150M' },
-            { id: 4, name: 'Paradex', tier: 'T2', chain: 'Starknet', points_program: 'TGE', volume_24h: 1263000000, oi: 553000000, fdv_low: 0.04, fdv_high: 0.08, poly_vol: '$201K', note: '✅ 已結算 $40M~$80M' },
-            { id: 5, name: 'Ostium', tier: 'T2', chain: 'Arbitrum', points_program: 'Season 2', volume_24h: 303640000, oi: 185680000, fdv_low: 0.3, fdv_high: 0.3, poly_vol: '$68K', note: '26% 機率 ≥$300M' },
-            { id: 6, name: 'Pacifica', tier: 'T3', chain: 'Solana', points_program: 'Live', volume_24h: 434930000, oi: 74900000, fdv_low: 0.3, fdv_high: 0.3, poly_vol: '$64K', note: '17% 機率 ≥$300M' },
-            { id: 7, name: 'GRVT', tier: 'T2', chain: 'zkSync', points_program: 'Live', volume_24h: 1467000000, oi: 529160000, fdv_low: 0.05, fdv_high: 0.05, poly_vol: '$280K', note: '93% 機率 ≥$50M' },
-            { id: 8, name: 'Reya', tier: 'T3', chain: 'Reya Network', points_program: 'OG', volume_24h: 142200000, oi: 7500000, fdv_low: 0.07, fdv_high: 0.07, poly_vol: '$367K', note: '66% 機率 ≥$70M' },
-            { id: 9, name: 'StandX', tier: 'T1', chain: 'Solana/BSC', points_program: 'Active', volume_24h: 632000000, oi: 30000000, fdv_low: 0.2, fdv_high: 0.2, poly_vol: '$1.33M', note: '67% 機率 ≥$200M' },
-            { id: 10, name: 'Backpack', tier: 'T1', chain: 'N/A', points_program: 'TGE', volume_24h: 1265201632, oi: 255202649, fdv_low: 0.2, fdv_high: 0.3, poly_vol: '—', note: '✅ 已結算 $200M~$300M' }
+            { id: 1, name: 'Extended', tier: 'T3', chain: 'Starknet', points_program: 'Live', volume_24h: 471980000, oi: 327240000, fdv_low: 0.15, fdv_high: 0.15, poly_vol: '$1.98M', note: '63% 機率 ≥$150M' },
+            { id: 2, name: 'StandX', tier: 'T1', chain: 'Solana/BSC', points_program: 'Active', volume_24h: 632000000, oi: 30000000, fdv_low: 0.2, fdv_high: 0.2, poly_vol: '$1.33M', note: '67% 機率 ≥$200M' },
+            { id: 3, name: 'Variational', tier: 'T2', chain: 'Arbitrum', points_program: 'Season 1', volume_24h: 1322000000, oi: 589570000, fdv_low: 0.1, fdv_high: 0.1, poly_vol: '$976K', note: '92% 機率 ≥$100M' },
+            { id: 4, name: 'Reya', tier: 'T3', chain: 'Reya Network', points_program: 'OG', volume_24h: 142200000, oi: 7500000, fdv_low: 0.07, fdv_high: 0.07, poly_vol: '$367K', note: '66% 機率 ≥$70M' },
+            { id: 5, name: 'GRVT', tier: 'T2', chain: 'zkSync', points_program: 'Live', volume_24h: 1467000000, oi: 529160000, fdv_low: 0.05, fdv_high: 0.05, poly_vol: '$280K', note: '93% 機率 ≥$50M' },
+            { id: 6, name: 'Ostium', tier: 'T2', chain: 'Arbitrum', points_program: 'Season 2', volume_24h: 303640000, oi: 185680000, fdv_low: 0.3, fdv_high: 0.3, poly_vol: '$68K', note: '26% 機率 ≥$300M' },
+            { id: 7, name: 'Pacifica', tier: 'T3', chain: 'Solana', points_program: 'Live', volume_24h: 434930000, oi: 74900000, fdv_low: 0.3, fdv_high: 0.3, poly_vol: '$64K', note: '17% 機率 ≥$300M' }
         ];
 
         let data = [...INITIAL_DATA];
